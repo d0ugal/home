@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Numeric, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 
@@ -55,7 +55,7 @@ class DataPoint(Base):
     __tablename__ = 'data_point'
 
     id = Column(Integer, primary_key=True)
-    value = Column(Integer, nullable=False)
+    value = Column(Numeric, nullable=False)
     series_id = Column(Integer, ForeignKey('series.id'))
     device_id = Column(Integer, ForeignKey('device.id'))
 

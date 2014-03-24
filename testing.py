@@ -11,7 +11,7 @@ ser = get_series(s, 'test2')
 
 dev = get_device(s, 1, 2, '3')
 
-record(s, ser, dev, 100)
+record(s, ser, dev, 100.1)
 
 from home.report import *
 
