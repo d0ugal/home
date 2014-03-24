@@ -1,0 +1,7 @@
+.tox
+*.pyc
+.coverage
+*.egg-info
+data.db
+.vagrant
+dist

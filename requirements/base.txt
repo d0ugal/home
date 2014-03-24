@@ -1,0 +1,3 @@
+sqlalchemy==0.9.3
+
+git+https://github.com/d0ugal/rfxcom.git
