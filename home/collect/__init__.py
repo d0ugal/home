@@ -43,7 +43,8 @@ def run():
     dictConfig(LOGGING)
 
     elec_handler = RecordingHander({
-        'electricity': 'current_watts'
+        'electricity': 'current_watts',
+        'total_watts': 'total_watts'
     })
 
     temp_humidity_handler = RecordingHander({
