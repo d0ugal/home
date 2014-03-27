@@ -40,6 +40,7 @@ setup(
         'sqlalchemy',
         'psycopg2',
         'rfxcom',
+        'flask',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -55,6 +56,7 @@ setup(
             'home-collect = home.collect:run',
             'home-report = home.report:run',
             'home-syncdb = home.ts:syncdb',
+            'home-dash = home.dash:run',
         ]
     },
     zip_safe=False,

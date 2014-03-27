@@ -1,0 +1,20 @@
+SELECT
+  date,
+  coalesce(min_v,0) AS min_v,
+  coalesce(max_v,0) AS max_v,
+  coalesce(avg_v,0) AS avg_v
+FROM
+ generate_series(
+   '2014-03-24 18:00'::timestamp,
+   '2014-03-25 15:00'::timestamp,
+   '1 hour') AS date
+LEFT OUTER JOIN
+  (SELECT
+     date_trunc('hour', data_point.created_at) as day,
+     min(data_point.value) as min_v,
+     max(data_point.value) as max_v,
+     avg(data_point.value) as avg_v
+   FROM data_point
+   WHERE device_id = 2
+   GROUP BY day) results
+ON (date = results.day);

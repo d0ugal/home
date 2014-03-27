@@ -25,9 +25,10 @@ def report():
 
     for s in series:
 
-        max_v, min_v, count, start, latest = session.query(
+        max_v, min_v, count, avg, start, latest = session.query(
             func.max(DataPoint.value),
             func.min(DataPoint.value),
+            func.avg(DataPoint.value),
             func.count(DataPoint.value),
             func.min(DataPoint.created_at),
             func.max(DataPoint.created_at)
@@ -39,6 +40,7 @@ def report():
         print("    Last Read   :", latest)
         print("    Minimum     :", min_v)
         print("    Maximum     :", max_v)
+        print("    Average     :", avg)
         print()
 
 

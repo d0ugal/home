@@ -11,6 +11,25 @@ class ModelBase(object):
     def __init__(self):
         self.created_at = datetime.utcnow()
 
+    @classmethod
+    def get_or_create(cls, session, **kwargs):
+        instance = cls.get(session, **kwargs)
+
+        if instance:
+            return instance
+
+        instance = cls(**kwargs)
+        session.add(instance)
+        return instance
+
+    @classmethod
+    def get(cls, session, **kwargs):
+        return cls.filter_by(session, **kwargs).first()
+
+    @classmethod
+    def filter_by(cls, session, **kwargs):
+        return session.query(cls).filter_by(**kwargs)
+
 
 Base = declarative_base(cls=ModelBase)
 
@@ -39,12 +58,13 @@ class Device(Base):
     device_sub_type = Column(Integer)
     device_id = Column(String(20), nullable=False, unique=True)
 
-    def __init__(self, device_type, device_sub_type, device_id):
+    def __init__(self, device_type, device_sub_type, device_id, name=None):
         self.created_at = datetime.utcnow()
         super().__init__()
         self.device_type = device_type
         self.device_sub_type = device_sub_type
         self.device_id = device_id
+        self.name = name
 
     def __repr__(self):
         return "Device(name=%s, ID=%r)" % (
@@ -64,12 +84,13 @@ class DataPoint(Base):
     device = relationship("Device",
                           backref=backref('data_points', order_by=id))
 
-    def __init__(self, series, device, value):
+    def __init__(self, series, device, value, created_at=None):
         self.created_at = datetime.utcnow()
         super().__init__()
         self.series = series
         self.device = device
         self.value = value
+        self.created_at = created_at
 
     def __repr__(self):
         return "<Data Point(%s, %s, value=%s, created_at=%s)>" % (

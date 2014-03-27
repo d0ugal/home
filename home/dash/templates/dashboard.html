@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="row">
+
+    <div class="col-md-4">
+      <h2>Temperature</h2>
+
+        <div id="temperature_y_axis"></div>
+        <div id="temperature_chart"></div>
+        <div id="temperature_legend"></div>
+
+   </div>
+
+    <div class="col-md-4">
+      <h2>Humidity</h2>
+
+        <div id="humidity_y_axis"></div>
+        <div id="humidity_chart"></div>
+        <div id="humidity_legend"></div>
+
+   </div>
+
+    <div class="col-md-4">
+      <h2>Electricity</h2>
+
+        <div id="electricity_y_axis"></div>
+        <div id="electricity_chart"></div>
+        <div id="electricity_legend"></div>
+
+   </div>
+
+    <div class="col-md-4">
+      <h2>Total Watts</h2>
+
+        <div id="total_watts_y_axis"></div>
+        <div id="total_watts_chart"></div>
+        <div id="total_watts_legend"></div>
+
+   </div>
+
+  </div>
+
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript">
+
+$(function(){
+
+    var tv = 500;
+
+
+    var graph_factory = function(id, start, end){
+
+        var url = '/data/' + id + '/' + start + '/' + end + '/'
+
+        var palette = new Rickshaw.Color.Palette( {scheme: 'spectrum14'} );
+
+        d3.json(url, function(json) {
+
+            json = json.data;
+
+            $.each(json, function(x, dict){
+                dict.color = palette.color();
+                $.each(dict.data, function(y, point){
+                    console.log(point.x);
+                    point.x = Date.parse(point.x) / 1000;
+                });
+            });
+            var graph = new Rickshaw.Graph({
+                element: document.getElementById(id + "_chart"),
+                width: 690,
+                height: 160,
+                renderer: 'line',
+                series: json
+            })
+
+            var x_axis = new Rickshaw.Graph.Axis.Time({
+                graph: graph
+            });
+            var y_axis = new Rickshaw.Graph.Axis.Y({
+                graph: graph,
+                tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+            });
+
+            var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+                graph: graph
+            } );
+
+            graph.render();
+
+
+        })
+
+    }
+
+    var s = "2014-03-20%2016:00";
+    var e = "2014-03-26%2016:00";
+
+    graph_factory("temperature", s, e);
+    graph_factory("humidity", s, e);
+    graph_factory("electricity", s, e);
+    graph_factory("total_watts", s, e);
+
+});
+
+
+</script>
+
+{% endblock %}
