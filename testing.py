@@ -23,12 +23,11 @@ start = datetime.now()
 
 watts = 1200000
 
-for i in range(2000):
+for i in range(500):
 
-    d = start - timedelta(minutes=(i * 5) + randint(0, 30))
+    d = start - timedelta(minutes=i + randint(0, 5))
 
-    if i % 100 == 0:
-        print(d, i)
+    print(d, i)
 
     record(s, ts1, dev1, randint(15, 30), created_at=d)
     record(s, ts2, dev1, randint(40, 60), created_at=d)

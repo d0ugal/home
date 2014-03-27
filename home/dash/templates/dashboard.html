@@ -4,7 +4,7 @@
 
   <div class="row">
 
-    <div class="col-md-4">
+    <div>
       <h2>Temperature</h2>
 
         <div id="temperature_y_axis"></div>
@@ -13,7 +13,7 @@
 
    </div>
 
-    <div class="col-md-4">
+    <div>
       <h2>Humidity</h2>
 
         <div id="humidity_y_axis"></div>
@@ -22,7 +22,7 @@
 
    </div>
 
-    <div class="col-md-4">
+    <div>
       <h2>Electricity</h2>
 
         <div id="electricity_y_axis"></div>
@@ -57,33 +57,38 @@ $(function(){
 
         var url = '/data/' + id + '/' + start + '/' + end + '/'
 
-        var palette = new Rickshaw.Color.Palette( {scheme: 'spectrum14'} );
-
         d3.json(url, function(json) {
 
             json = json.data;
 
             $.each(json, function(x, dict){
-                dict.color = palette.color();
+                dict.scale = d3.scale.linear().domain([dict.min, dict.max]).nice();
                 $.each(dict.data, function(y, point){
-                    console.log(point.x);
                     point.x = Date.parse(point.x) / 1000;
                 });
             });
+
             var graph = new Rickshaw.Graph({
                 element: document.getElementById(id + "_chart"),
                 width: 690,
                 height: 160,
-                renderer: 'line',
-                series: json
-            })
+                renderer: 'multi',
+                series: json,
+                interpolation: 'linear',
+            });
 
             var x_axis = new Rickshaw.Graph.Axis.Time({
                 graph: graph
             });
-            var y_axis = new Rickshaw.Graph.Axis.Y({
+            var y_axis = new Rickshaw.Graph.Axis.Y.Scaled({
                 graph: graph,
-                tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                scale: json[0].scale
+            });
+            var y_axis = new Rickshaw.Graph.Axis.Y.Scaled({
+                graph: graph,
+                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                scale: json[1].scale
             });
 
             var hoverDetail = new Rickshaw.Graph.HoverDetail( {
@@ -97,13 +102,13 @@ $(function(){
 
     }
 
-    var s = "2014-03-20%2016:00";
-    var e = "2014-03-26%2016:00";
+    var s = "2014-03-26%2000:00";
+    var e = "2014-03-27%2000:00";
 
     graph_factory("temperature", s, e);
     graph_factory("humidity", s, e);
     graph_factory("electricity", s, e);
-    graph_factory("total_watts", s, e);
+    //graph_factory("total_watts", s, e);
 
 });
 

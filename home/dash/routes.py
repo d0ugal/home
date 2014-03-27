@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 
-from flask import Flask, render_template, jsonify
+from flask import render_template, Flask, jsonify
 
 PROJECT_PATH = os.path.dirname(os.path.realpath(__file__))
 TEMPLATE_FOLDER = os.path.join(PROJECT_PATH, 'templates')
@@ -29,4 +29,6 @@ def data(series, start, end):
 
     generator = SeriesGenerator(series_name, start_dt, end_dt)
 
-    return jsonify(data=generator.all())
+    return jsonify(
+        data=generator.all()
+    )

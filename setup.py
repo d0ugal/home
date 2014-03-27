@@ -41,6 +41,7 @@ setup(
         'psycopg2',
         'rfxcom',
         'flask',
+        'simplejson',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
