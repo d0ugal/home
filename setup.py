@@ -37,11 +37,11 @@ setup(
     author_email='dougal@dougalmatthews.com',
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'sqlalchemy',
-        'psycopg2',
-        'rfxcom',
-        'flask',
-        'simplejson',
+        'sqlalchemy==0.9.3',
+        'psycopg2==2.5.2',
+        'rfxcom==0.0.1',
+        'flask==0.10.1',
+        'simplejson==3.3.3',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

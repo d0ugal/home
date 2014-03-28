@@ -1,0 +1,5 @@
+sphinx
+coverage
+nose
+flake8
+sphinx_rtd_theme
