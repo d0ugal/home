@@ -1,41 +1,25 @@
-from datetime import datetime, timedelta
-from random import randint
+from unittest.mock import Mock
 
-from home.ts import (Base, engine, syncdb, get_series, get_device, Session,
-                     record)
+from home.collect.handlers import RecordingHander
+from home import app
 
-Base.metadata.drop_all(engine)
 
-syncdb()
+def run():
+    r = RecordingHander({
+        'series_name2': 'value_name2',
+        'series_name4': 'packet_type'
+    })
 
-s = Session()
+    p = Mock()
+    p.data = {
+        'value_name2': 70,
+        'packet_type': 33,
+        'sub_type': 1,
+        'id': 'test',
+    }
 
-ts1 = get_series(s, 'temperature')
-ts2 = get_series(s, 'humidity')
-ts3 = get_series(s, 'electricity')
-ts4 = get_series(s, 'total_watts')
+    r(p)
 
-dev1 = get_device(s, 1, 2, '3', name='study')
-dev2 = get_device(s, 2, 3, '4', name='kitchen')
-dev3 = get_device(s, 3, 4, '5', name='electricity')
 
-start = datetime.now()
-
-watts = 1200000
-
-for i in range(500):
-
-    d = start - timedelta(minutes=i + randint(0, 5))
-
-    print(d, i)
-
-    record(s, ts1, dev1, randint(15, 30), created_at=d)
-    record(s, ts2, dev1, randint(40, 60), created_at=d)
-
-    record(s, ts1, dev2, randint(15, 30), created_at=d)
-    record(s, ts2, dev2, randint(40, 60), created_at=d)
-
-    record(s, ts3, dev3, randint(300, 6000), created_at=d)
-
-    watts -= randint(300, 600)
-    record(s, ts4, dev3, watts, created_at=d)
+with app.app_context():
+    run()

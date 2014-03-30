@@ -1,80 +1,70 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Numeric, Integer, String, ForeignKey, DateTime
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
+from flask.ext.sqlalchemy import SQLAlchemy
+
+from home.util import get_or_create
+
+db = SQLAlchemy()
 
 
-class ModelBase(object):
-    created_at = Column(DateTime, nullable=False)
-
-    def __init__(self):
-        self.created_at = datetime.utcnow()
-
-    @classmethod
-    def get_or_create(cls, session, **kwargs):
-        instance = cls.get(session, **kwargs)
-
-        if instance:
-            return instance
-
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def get(cls, session, **kwargs):
-        return cls.filter_by(session, **kwargs).first()
-
-    @classmethod
-    def filter_by(cls, session, **kwargs):
-        return session.query(cls).filter_by(**kwargs)
-
-
-Base = declarative_base(cls=ModelBase)
-
-
-class Series(Base):
+class Series(db.Model):
     __tablename__ = 'series'
 
     id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, nullable=False)
     name = Column(String(20), nullable=False, unique=True)
 
     def __init__(self, name):
-        self.created_at = datetime.utcnow()
         super().__init__()
+        self.created_at = datetime.utcnow()
         self.name = name
+
+    @classmethod
+    def get_or_create(cls, **kwargs):
+        r = get_or_create(cls, **kwargs)
+        print(r)
+        return r
 
     def __repr__(self):
         return "Series(name=%r)" % (self.name)
 
 
-class Device(Base):
+class Device(db.Model):
     __tablename__ = 'device'
 
     id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, nullable=False)
     name = Column(String(20), nullable=True, unique=True)
     device_type = Column(Integer)
     device_sub_type = Column(Integer)
     device_id = Column(String(20), nullable=False, unique=True)
 
     def __init__(self, device_type, device_sub_type, device_id, name=None):
-        self.created_at = datetime.utcnow()
         super().__init__()
+        self.created_at = datetime.utcnow()
         self.device_type = device_type
         self.device_sub_type = device_sub_type
         self.device_id = device_id
         self.name = name
+
+    @classmethod
+    def get_or_create(cls, device_type, device_sub_type, device_id):
+        return get_or_create(cls, device_type=device_type,
+                             device_sub_type=device_sub_type,
+                             device_id=device_id)
 
     def __repr__(self):
         return "Device(name=%s, ID=%r)" % (
             self.name, self.device_id)
 
 
-class DataPoint(Base):
+class DataPoint(db.Model):
     __tablename__ = 'data_point'
 
     id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, nullable=False)
     value = Column(Numeric, nullable=False)
     series_id = Column(Integer, ForeignKey('series.id'))
     device_id = Column(Integer, ForeignKey('device.id'))
@@ -91,6 +81,22 @@ class DataPoint(Base):
         self.device = device
         self.value = value
         self.created_at = created_at
+
+    @classmethod
+    def record(cls, series, device, value, created_at=None):
+        data_point = DataPoint(series=series, device=device, value=value)
+        if created_at is None:
+            data_point.created_at = datetime.utcnow()
+        db.session.add(data_point)
+        return data_point
+
+    def as_dict(self):
+
+        d = super().as_dict()
+        d['device'] = self.device.as_dict()
+        d['series'] = self.series.as_dict()
+
+        return d
 
     def __repr__(self):
         return "<Data Point(%s, %s, value=%s, created_at=%s)>" % (

@@ -4,7 +4,6 @@ from rfxcom import protocol
 
 from home.collect.handlers import RecordingHander, LoggingHandler
 from home.collect.loop import collect
-from home.ts import syncdb
 
 
 def run():
@@ -20,8 +19,6 @@ def run():
     })
 
     logging_handler = LoggingHandler()
-
-    syncdb()
 
     parser = ArgumentParser(description='.')
     parser.add_argument('--device')

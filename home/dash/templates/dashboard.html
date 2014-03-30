@@ -5,40 +5,49 @@
   <div class="row">
 
     <div>
-      <h2>Temperature</h2>
+        <h2>Study</h2>
+        <h3>Temperature</h3>
+        <div id="temperature_study_chart"></div>
 
-        <div id="temperature_y_axis"></div>
-        <div id="temperature_chart"></div>
-        <div id="temperature_legend"></div>
-
-   </div>
-
-    <div>
-      <h2>Humidity</h2>
-
-        <div id="humidity_y_axis"></div>
-        <div id="humidity_chart"></div>
-        <div id="humidity_legend"></div>
-
-   </div>
+        <h3>Humidity</h3>
+        <div id="humidity_study_chart"></div>
+    </div>
 
     <div>
-      <h2>Electricity</h2>
+        <h2>Kitchen</h2>
+        <h3>Temperature</h3>
+        <div id="temperature_kitchen_chart"></div>
 
-        <div id="electricity_y_axis"></div>
-        <div id="electricity_chart"></div>
-        <div id="electricity_legend"></div>
+        <h3>Humidity</h3>
+        <div id="humidity_kitchen_chart"></div>
+    </div>
 
-   </div>
+    <div>
+        <h2>Bathroom</h2>
+        <h3>Temperature</h3>
+        <div id="temperature_bathroom_chart"></div>
 
-    <div class="col-md-4">
-      <h2>Total Watts</h2>
+        <h3>Humidity</h3>
+        <div id="humidity_bathroom_chart"></div>
+    </div>
 
-        <div id="total_watts_y_axis"></div>
-        <div id="total_watts_chart"></div>
-        <div id="total_watts_legend"></div>
+    <div>
+        <h2>Livingroom</h2>
+        <h3>Temperature</h3>
+        <div id="temperature_livingroom_chart"></div>
 
-   </div>
+        <h3>Humidity</h3>
+        <div id="humidity_livingroom_chart"></div>
+    </div>
+
+    <div>
+        <h2>Electricity</h2>
+        <h3>Current Watts</h3>
+        <div id="electricity_electricity_chart"></div>
+
+        <h3>Total Watts</h3>
+        <div id="total_watts_electricity_chart"></div>
+    </div>
 
   </div>
 
@@ -53,27 +62,36 @@ $(function(){
     var tv = 500;
 
 
-    var graph_factory = function(id, start, end){
+    var graph_factory = function(id, device, start, end){
 
-        var url = '/data/' + id + '/' + start + '/' + end + '/'
+        var element_name = id + '_' + device + '_chart';
 
-        d3.json(url, function(json) {
+        var url = '/data/' + id + '/' + device + '/' + start + '/' + end + '/';
 
-            json = json.data;
+        d3.json(url, function(data) {
 
-            $.each(json, function(x, dict){
-                dict.scale = d3.scale.linear().domain([dict.min, dict.max]).nice();
+            var series = data.series;
+
+            var min = Math.min(series[0].min, series[1].min);
+            var min = min * 0.95;
+            var max = Math.max(series[0].max, series[1].max);
+            var max = max * 1.05;
+
+            var scaler = d3.scale.linear().domain([min, max]).nice();
+
+            $.each(series, function(x, dict){
+                dict.scale = scaler;
                 $.each(dict.data, function(y, point){
                     point.x = Date.parse(point.x) / 1000;
                 });
             });
 
             var graph = new Rickshaw.Graph({
-                element: document.getElementById(id + "_chart"),
+                element: document.getElementById(element_name),
                 width: 690,
                 height: 160,
                 renderer: 'multi',
-                series: json,
+                series: series,
                 interpolation: 'linear',
             });
 
@@ -83,12 +101,7 @@ $(function(){
             var y_axis = new Rickshaw.Graph.Axis.Y.Scaled({
                 graph: graph,
                 tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-                scale: json[0].scale
-            });
-            var y_axis = new Rickshaw.Graph.Axis.Y.Scaled({
-                graph: graph,
-                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-                scale: json[1].scale
+                scale: scaler
             });
 
             var hoverDetail = new Rickshaw.Graph.HoverDetail( {
@@ -102,13 +115,19 @@ $(function(){
 
     }
 
-    var s = "2014-03-26%2000:00";
-    var e = "2014-03-27%2000:00";
+    var s = "2014-03-27%2000:00";
+    var e = "2014-03-28%2000:00";
 
-    graph_factory("temperature", s, e);
-    graph_factory("humidity", s, e);
-    graph_factory("electricity", s, e);
-    //graph_factory("total_watts", s, e);
+    graph_factory("temperature", 'study', s, e);
+    graph_factory("humidity", 'study', s, e);
+    graph_factory("temperature", 'kitchen', s, e);
+    graph_factory("humidity", 'kitchen', s, e);
+    graph_factory("temperature", 'bathroom', s, e);
+    graph_factory("humidity", 'bathroom', s, e);
+    graph_factory("temperature", 'livingroom', s, e);
+    graph_factory("humidity", 'livingroom', s, e);
+    graph_factory("electricity", 'electricity', s, e);
+    graph_factory("total_watts", 'electricity', s, e);
 
 });
 

@@ -1,4 +1,11 @@
+from os import path
 from sys import stdout
+
+SQLALCHEMY_DATABASE_URI = 'postgresql://home:home@localhost:5432/home'
+
+PROJECT_PATH = path.dirname(path.realpath(__file__))
+TEMPLATE_FOLDER = path.join(PROJECT_PATH, 'dash', 'templates')
+STATIC_FOLDER = path.join(PROJECT_PATH, 'dash', 'static')
 
 LOGGING = {
     'version': 1,

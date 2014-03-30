@@ -1,6 +1,7 @@
 from logging import getLogger
 
-from home.ts import Session, get_series, get_device, record
+from home.ts.models import Device, Series, DataPoint
+from home import db
 
 
 class BaseHandler:
@@ -24,20 +25,19 @@ class LoggingHandler(BaseHandler):
 class RecordingHander(BaseHandler):
 
     def __init__(self, mapping):
-
         super().__init__()
         self.mapping = mapping
 
     def __call__(self, packet):
 
-        session = Session()
-
-        device = get_device(session, packet.data['packet_type'],
-                            packet.data['sub_type'], packet.data['id'])
+        device = Device.get_or_create(packet.data['packet_type'],
+                                      packet.data['sub_type'],
+                                      packet.data['id'])
 
         for series_name, value_name in self.mapping.items():
 
-            series = get_series(session, series_name)
+            series = Series.get_or_create(name=series_name)
+            db.session.commit()
             try:
                 val = packet.data[value_name]
             except KeyError:
@@ -47,4 +47,6 @@ class RecordingHander(BaseHandler):
 
             id_ = packet.data.get('id')
             self.log.info("ID=%s, %s=%s" % (id_, series_name, val))
-            record(session, series, device, val)
+            DataPoint.record(series, device, val)
+
+        db.session.commit()

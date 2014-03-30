@@ -37,11 +37,13 @@ setup(
     author_email='dougal@dougalmatthews.com',
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'sqlalchemy==0.9.3',
+        'alembic==0.6.3',
+        'Flask-SQLAlchemy==1.0',
+        'Flask==0.10.1',
         'psycopg2==2.5.2',
         'rfxcom==0.0.1',
-        'flask==0.10.1',
         'simplejson==3.3.3',
+        'SQLAlchemy==0.9.3',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -56,7 +58,7 @@ setup(
         'console_scripts': [
             'home-collect = home.collect:run',
             'home-report = home.report:run',
-            'home-syncdb = home.ts:syncdb',
+            'home-syncdb = home.util:syncdb',
             'home-dash = home.dash:run',
         ]
     },
