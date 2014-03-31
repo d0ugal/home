@@ -19,7 +19,8 @@ class LoggingHandler(BaseHandler):
 
     def __call__(self, packet):
 
-        self.log.warning("Ignoring packet: " % self.format_packet(packet.raw))
+        self.log.warning(
+            "Ignoring packet: {0}".format(self.format_packet(packet.raw)))
 
 
 class RecordingHander(BaseHandler):
@@ -41,8 +42,8 @@ class RecordingHander(BaseHandler):
             try:
                 val = packet.data[value_name]
             except KeyError:
-                self.log.error("Failed to find %s in %r" % (value_name,
-                                                            packet.data))
+                self.log.error("Failed to find %s in packet. Key list: %r" % (
+                    value_name, sorted(packet.data.keys())))
                 return
 
             id_ = packet.data.get('id')

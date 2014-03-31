@@ -9,7 +9,13 @@ from home.util import get_or_create
 db = SQLAlchemy()
 
 
-class Series(db.Model):
+class SerialiseMixin:
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Series(db.Model, SerialiseMixin):
     __tablename__ = 'series'
 
     id = Column(Integer, primary_key=True)
@@ -24,14 +30,13 @@ class Series(db.Model):
     @classmethod
     def get_or_create(cls, **kwargs):
         r = get_or_create(cls, **kwargs)
-        print(r)
         return r
 
     def __repr__(self):
         return "Series(name=%r)" % (self.name)
 
 
-class Device(db.Model):
+class Device(db.Model, SerialiseMixin):
     __tablename__ = 'device'
 
     id = Column(Integer, primary_key=True)
@@ -60,7 +65,7 @@ class Device(db.Model):
             self.name, self.device_id)
 
 
-class DataPoint(db.Model):
+class DataPoint(db.Model, SerialiseMixin):
     __tablename__ = 'data_point'
 
     id = Column(Integer, primary_key=True)

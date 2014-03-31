@@ -1,83 +1,78 @@
 from functools import wraps
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
+from flask.views import MethodView
+from werkzeug.exceptions import BadRequest
 
 from home.ts.models import Device, Series, DataPoint
 
 api = Blueprint('Dashboard API', __name__)
 
 
-def _kwargs_from_request(f):
+def register_api(view, endpoint, url, pk='resource_id', pk_type='int'):
+    view_func = view.as_view(endpoint)
+    api.add_url_rule(url, defaults={pk: None},
+                     view_func=view_func, methods=['GET', ])
+    api.add_url_rule(url, view_func=view_func, methods=['POST', ])
+    api.add_url_rule('%s<%s:%s>' % (url, pk_type, pk), view_func=view_func,
+                     methods=['GET', 'PUT', 'DELETE'])
+
+
+def kwargs_from_request(f):
 
     @wraps(f)
     def wrapper(*args, **kwargs):
 
-        json = request.get_json(force=True)
+        try:
+            json = request.get_json(force=True)
+        except BadRequest:
+            json = {}
 
         if isinstance(json, dict):
             kwargs.update(json)
         else:
-            raise Exception("Invalid JSOn.")
+            raise Exception("Invalid JSON")
 
         return f(*args, **kwargs)
 
     return wrapper
 
 
-def register_url_rules(rules):
+class Resource(MethodView):
 
-    for rule, function, methods in rules:
-        api.add_url_rule(rule, view_func=function, methods=methods)
+    page_size = 100
+
+    def jsonify_qs(self, qs, **kwargs):
+        return jsonify(results=[i.as_dict() for i in qs], **kwargs)
+
+    @kwargs_from_request
+    def get(self, resource_id=None, **kwargs):
+
+        if resource_id is not None:
+            resource = self.model.query.filter_by(id=resource_id).first()
+            return jsonify(resource.as_dict())
+
+        page = max(int(request.args.get('page', '0')), 1)
+
+        results = self.model.query.filter_by(**kwargs)
+        count = results.count()
+        offset = (page - 1) * self.page_size
+        results = results.limit(self.page_size).offset(offset)
+        return self.jsonify_qs(results, count=count, page=page)
 
 
-class Resource(object):
+class DevicesResource(Resource):
+    model = Device
 
-    def __init__(self, model, resource_name=None):
-        self.model = model
 
-        if resource_name is None:
-            self.resource_name = self.model.__class__.__name__.lower()
-        else:
-            self.resource_name = resource_name
+class SeriesResource(Resource):
+    model = Series
 
-        register_url_rules(self.get_url_rules())
 
-    @property
-    def session(self):
-        from home import db
-        return db.session
+class ValuesResource(Resource):
+    model = DataPoint
 
-    def get_url_rules(self):
 
-        base = '/{0}/'.format(self.resource_name)
-        id_ = '/{0}/<id>/'.format(self.resource_name)
-
-        return (
-            (base, self.get, ['GET', ]),
-            (id_, self.get, ['GET', ]),
-            (base, self.post, ['POST', ]),
-            (id_, self.put, ['PUT', ]),
-            (id_, self.delete, ['DELETE', ]),
-        )
-
-    def get(self, id_=None, **kwargs):
-
-        if id_ is not None:
-            return self.model.get(self.session, id_=id_)
-
-        return self.model.filter_by(self.session, **kwargs)
-
-    def post(self, **kwargs):
-        instance = self.model.create(self.session, **kwargs)
-        return instance
-
-    def put(self, id_, **kwargs):
-        instance = self.model.update(self.session, id_=id_, **kwargs)
-        return instance
-
-    def delete(self, id_):
-        return self.model.delete(id_=id_)
-
-devices = Resource(Device, "devices")
-# series = Resource(Series, "series")
-# data_points = Resource(DataPoint, "data_points")
+register_api(DevicesResource, 'devices', '/devices/')
+register_api(SeriesResource, 'series', '/series/')
+register_api(ValuesResource, 'values', '/values/')

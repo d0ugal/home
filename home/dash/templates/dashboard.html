@@ -40,6 +40,26 @@
         <div id="humidity_livingroom_chart"></div>
     </div>
 
+
+    <div>
+        <h2>Bedroom</h2>
+        <h3>Temperature</h3>
+        <div id="temperature_bedroom_chart"></div>
+
+        <h3>Humidity</h3>
+        <div id="humidity_bedroom_chart"></div>
+    </div>
+
+
+    <div>
+        <h2>Front Door</h2>
+        <h3>Temperature</h3>
+        <div id="temperature_front_door_chart"></div>
+
+        <h3>Humidity</h3>
+        <div id="humidity_livingroom_chart"></div>
+    </div>
+
     <div>
         <h2>Electricity</h2>
         <h3>Current Watts</h3>
@@ -115,8 +135,8 @@ $(function(){
 
     }
 
-    var s = "2014-03-27%2000:00";
-    var e = "2014-03-28%2000:00";
+    var s = "2014-03-25%2000:00";
+    var e = "2014-04-01%2000:00";
 
     graph_factory("temperature", 'study', s, e);
     graph_factory("humidity", 'study', s, e);

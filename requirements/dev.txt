@@ -1,5 +1,6 @@
-sphinx
 coverage
-nose
 flake8
+Flask-Testing
+nose
+sphinx
 sphinx_rtd_theme
