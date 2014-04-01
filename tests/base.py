@@ -20,9 +20,7 @@ class BaseTestCase(TestCase):
 
         app = create_app(self)
 
-        self.assertEqual(
-            app.config['SQLALCHEMY_DATABASE_URI'],
-            'postgresql://home:home@localhost:5432/test_home')
+        self.assertEqual(app.config['SQLALCHEMY_DATABASE_URI'], _DATABASE_URI)
 
         return app
 
