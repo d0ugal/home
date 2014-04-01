@@ -1,3 +1,4 @@
+from logging.config import dictConfig
 from os import path
 from sys import stdout
 
@@ -36,6 +37,9 @@ LOGGING = {
         }
     },
 }
+
+dictConfig(LOGGING)
+
 
 PACKET_HANDLERS = {
     'rfxcom.protocol.Status': 'home.collect.logging_handler',

@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 
+from home import app
 from home.collect.handlers import RecordingHander, LoggingHandler
 from home.collect.loop import collect
-from home import app
 
 
 elec_handler = RecordingHander({
@@ -25,4 +25,6 @@ parser.add_argument('--device')
 def run():
 
     args = parser.parse_args()
-    collect(args.device)
+
+    with app.app_context():
+        collect(args.device)
