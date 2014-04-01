@@ -9,3 +9,7 @@ script:
   - tox -e $TOX_ENV
 notifications:
   irc: "chat.freenode.net##d0ugal"
+addons:
+  postgresql: "9.3"
+before_script:
+  - psql -c 'create database test_home;' -U postgres

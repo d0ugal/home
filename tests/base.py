@@ -1,12 +1,19 @@
+from os import environ
+
 from flask.ext.testing import TestCase
 
 from home import create_app
 from home.ts.models import db
 
+if environ.get('TRAVIS') == 'true':
+    _DATABASE_URI = 'postgresql://postgres@localhost:5432/test_home'
+else:
+    _DATABASE_URI = 'postgresql://home:home@localhost:5432/test_home'
+
 
 class BaseTestCase(TestCase):
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://home:home@localhost:5432/test_home'
+    SQLALCHEMY_DATABASE_URI = _DATABASE_URI
     TESTING = True
 
     def create_app(self):
