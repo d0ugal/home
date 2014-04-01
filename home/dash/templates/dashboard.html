@@ -102,7 +102,9 @@ $(function(){
         var yyyy =  date.getFullYear();
         var mm = ('0' + (date.getMonth()+1)).slice(-2);
         var dd = ('0' + (date.getDate())).slice(-2);
-        return yyyy + '-' + mm + '-' + dd + "%2000:00";
+        var hh = ('0' + (date.getHours())).slice(-2);
+        var min = ('0' + (date.getMinutes())).slice(-2);
+        return yyyy + '-' + mm + '-' + dd + "%20" + hh + ":" + min;
     }
 
     var today = new Date();
