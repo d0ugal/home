@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 from home.collect.handlers import RecordingHander, LoggingHandler
 from home.collect.loop import collect
+from home import app
 
 
 elec_handler = RecordingHander({
