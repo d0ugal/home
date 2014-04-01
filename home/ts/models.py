@@ -54,6 +54,29 @@ class Device(db.Model, SerialiseMixin):
         self.device_id = device_id
         self.name = name
 
+    def as_dict(self):
+
+        d = super().as_dict()
+
+        latest = {}
+
+        for series in self.get_series():
+
+            series_latest = (
+                DataPoint.query
+                .filter_by(device=self, series=series)
+                .order_by(DataPoint.created_at.desc())
+                .first()
+            )
+            latest[series.name] = SerialiseMixin.as_dict(series_latest)
+
+        d['latest'] = latest
+
+        return d
+
+    def get_series(self):
+        return Series.query.join(DataPoint).filter_by(device=self).all()
+
     @classmethod
     def get_or_create(cls, device_type, device_sub_type, device_id):
         return get_or_create(cls, device_type=device_type,

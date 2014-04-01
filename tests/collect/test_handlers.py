@@ -1,7 +1,12 @@
 from unittest.mock import Mock, patch, ANY
 from tests.base import BaseTestCase
 
-from home.collect.handlers import BaseHandler, LoggingHandler, RecordingHander
+from rfxcom.protocol import Status
+
+from home.collect import logging_handler
+from home.collect.handlers import (BaseHandler, LoggingHandler,
+                                   RecordingHander, load_handlers)
+from home.exceptions import HandlerConfigError
 
 
 def mock_packet(extra=None):
@@ -18,6 +23,52 @@ def mock_packet(extra=None):
         p.data.update(extra)
 
     return p
+
+
+class HandlerLoadingTestCase(BaseTestCase):
+
+    def test_load_handlers_empty(self):
+
+        result = load_handlers({})
+
+        self.assertEquals(result, {})
+
+    def test_load_handlers_duplicate(self):
+
+        with self.assertRaises(HandlerConfigError):
+            load_handlers({
+                'rfxcom.protocol.Status': 'home.collect.logging_handler',
+                Status: 'home.collect.logging_handler',
+            })
+
+    def test_load_handlers_bad_path(self):
+
+        with self.assertRaises(ImportError):
+            load_handlers({
+                'rfxcom.protocol..Status': 'home.collect.logging_handler'
+            })
+
+    def test_load_handlers_wildcard(self):
+
+        result = load_handlers({
+            '*': 'home.collect.logging_handler',
+        })
+
+        self.assertEquals(result, {
+            '*': logging_handler
+        })
+
+    def test_load_handlers_all_objects(self):
+
+        h = lambda x: x
+
+        result = load_handlers({
+            Status: h,
+        })
+
+        self.assertEquals(result, {
+            Status: h
+        })
 
 
 class BaseHandlerTestCase(BaseTestCase):

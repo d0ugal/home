@@ -1,0 +1,3 @@
+
+class HandlerConfigError(Exception):
+    pass

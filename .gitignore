@@ -6,3 +6,4 @@ data.db
 .vagrant
 dist
 docs/build/*
+dump.sql

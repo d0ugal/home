@@ -36,3 +36,10 @@ LOGGING = {
         }
     },
 }
+
+PACKET_HANDLERS = {
+    'rfxcom.protocol.Status': 'home.collect.logging_handler',
+    'rfxcom.protocol.Elec': 'home.collect.elec_handler',
+    'rfxcom.protocol.TempHumidity': 'home.collect.temp_humidity_handler',
+    '*': 'home.collect.logging_handler',
+}

@@ -4,70 +4,20 @@
 
   <div class="row">
 
-    <div>
-        <h2>Study</h2>
-        <h3>Temperature</h3>
-        <div id="temperature_study_chart"></div>
+    {% for device in devices %}
+        <div>
+            <h2>{{ device.name }}</h2>
 
-        <h3>Humidity</h3>
-        <div id="humidity_study_chart"></div>
-    </div>
+            {% for series in device.get_series() %}
+                <h3>
+                    {{ series.name }}
+                    <span id="{{ series.name }}_{{ device.name|replace(" ", "_") }}_latest"></span>
+                </h3>
+                <div id="{{ series.name }}_{{ device.name|replace(" ", "_") }}_chart"></div>
+            {% endfor %}
 
-    <div>
-        <h2>Kitchen</h2>
-        <h3>Temperature</h3>
-        <div id="temperature_kitchen_chart"></div>
-
-        <h3>Humidity</h3>
-        <div id="humidity_kitchen_chart"></div>
-    </div>
-
-    <div>
-        <h2>Bathroom</h2>
-        <h3>Temperature</h3>
-        <div id="temperature_bathroom_chart"></div>
-
-        <h3>Humidity</h3>
-        <div id="humidity_bathroom_chart"></div>
-    </div>
-
-    <div>
-        <h2>Livingroom</h2>
-        <h3>Temperature</h3>
-        <div id="temperature_livingroom_chart"></div>
-
-        <h3>Humidity</h3>
-        <div id="humidity_livingroom_chart"></div>
-    </div>
-
-
-    <div>
-        <h2>Bedroom</h2>
-        <h3>Temperature</h3>
-        <div id="temperature_bedroom_chart"></div>
-
-        <h3>Humidity</h3>
-        <div id="humidity_bedroom_chart"></div>
-    </div>
-
-
-    <div>
-        <h2>Front Door</h2>
-        <h3>Temperature</h3>
-        <div id="temperature_front_door_chart"></div>
-
-        <h3>Humidity</h3>
-        <div id="humidity_livingroom_chart"></div>
-    </div>
-
-    <div>
-        <h2>Electricity</h2>
-        <h3>Current Watts</h3>
-        <div id="electricity_electricity_chart"></div>
-
-        <h3>Total Watts</h3>
-        <div id="total_watts_electricity_chart"></div>
-    </div>
+        </div>
+    {% endfor %}
 
   </div>
 
@@ -82,11 +32,13 @@ $(function(){
     var tv = 500;
 
 
-    var graph_factory = function(id, device, start, end){
+    var graph_factory = function(series_name, device, start, end){
 
-        var element_name = id + '_' + device + '_chart';
+        var element_name = series_name + '_' + device + '_chart';
 
-        var url = '/data/' + id + '/' + device + '/' + start + '/' + end + '/';
+        element_name = element_name.replace(' ', '_');
+
+        var url = '/data/' + series_name + '/' + device + '/' + start + '/' + end + '/';
 
         d3.json(url, function(data) {
 
@@ -131,23 +83,40 @@ $(function(){
             graph.render();
 
 
-        })
+        });
 
+
+        var latest_element_name = series_name + '_' + device + '_latest';
+
+        $.get("/api/devices/" + device).done(function(data){
+            $("#" + latest_element_name).html(
+                "(latest reading: " + data.latest[series_name].value + " on " + data.latest[series_name].created_at +")")
+        });
+
+    };
+
+
+    fmt = function(date){
+        // Convert the date into YYYY-MM-DD HH:MM:SS
+        // btw, JavaScript date handling is horrible. It's basically broken.
+        var yyyy =  date.getFullYear();
+        var mm = ('0' + (date.getMonth()+1)).slice(-2);
+        var dd = ('0' + (date.getDate())).slice(-2);
+        return yyyy + '-' + mm + '-' + dd + "%2000:00";
     }
 
-    var s = "2014-03-25%2000:00";
-    var e = "2014-04-01%2000:00";
+    var today = new Date();
+    var past = new Date();
+    past.setDate(past.getDate() - 1);
 
-    graph_factory("temperature", 'study', s, e);
-    graph_factory("humidity", 'study', s, e);
-    graph_factory("temperature", 'kitchen', s, e);
-    graph_factory("humidity", 'kitchen', s, e);
-    graph_factory("temperature", 'bathroom', s, e);
-    graph_factory("humidity", 'bathroom', s, e);
-    graph_factory("temperature", 'livingroom', s, e);
-    graph_factory("humidity", 'livingroom', s, e);
-    graph_factory("electricity", 'electricity', s, e);
-    graph_factory("total_watts", 'electricity', s, e);
+    var start = fmt(past);
+    var end = fmt(today)
+
+    {% for device in devices %}
+        {% for series in device.get_series() %}
+            graph_factory("{{ series.name }}", "{{ device.name }}", start, end);
+        {% endfor %}
+    {% endfor %}
 
 });
 

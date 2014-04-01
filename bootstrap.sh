@@ -35,4 +35,5 @@ local    all         all         password
 host    all         all    127.0.0.1/32     password" > /etc/postgresql/9.1/main/pg_hba.conf
     sudo -u postgres -- psql -c "CREATE ROLE home NOSUPERUSER CREATEDB NOCREATEROLE INHERIT LOGIN PASSWORD 'home'";
     sudo -u postgres -- createdb -T template0 -E UTF8 -O home home;
+    sudo -u postgres -- createdb -T template0 -E UTF8 -O home test_home;
 fi

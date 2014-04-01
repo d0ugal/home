@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import render_template, jsonify, Blueprint
 
 from home.ts import SeriesGenerator
-from home.ts.models import DataPoint, Series, Device
+from home.ts.models import DataPoint, Device
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -11,7 +11,10 @@ web = Blueprint('Dashboard Web', __name__)
 
 @web.route('/')
 def dashboard():
-    return render_template('dashboard.html')
+
+    devices = Device.query.join(DataPoint).order_by(DataPoint.series_id).all()
+
+    return render_template('dashboard.html', devices=devices)
 
 
 @web.route('/data/<series>/<device>/<start>/<end>/')
@@ -24,19 +27,4 @@ def range(series, device, start, end):
 
     return jsonify(
         series=generator.all()
-    )
-
-
-@web.route('/data/<series>/<device>/latest/')
-def latest(series, device):
-
-    from home import db
-
-    data_point = db.session.query(DataPoint)\
-        .join(Series).join(Device)\
-        .filter(Series.name == series).filter(Device.name == device)\
-        .order_by(DataPoint.created_at.desc()).first()
-
-    return jsonify(
-        **data_point.as_dict()
     )

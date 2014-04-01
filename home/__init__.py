@@ -8,15 +8,16 @@ from home.dash.web import web
 from home.ts.models import db
 
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__,
                 static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
 
     app.config.from_object('home.config')
+    app.config.from_object(config)
+
     app.register_blueprint(web)
     app.register_blueprint(api, url_prefix='/api')
+    db.init_app(app)
     return app
 
 app = create_app()
-
-db.init_app(app)

@@ -1,7 +1,64 @@
 from logging import getLogger
 
-from home.ts.models import Device, Series, DataPoint
 from home import db
+from home.exceptions import HandlerConfigError
+from home.ts.models import Device, Series, DataPoint
+
+
+def importer(dotted_path):
+    module, object_ = dotted_path.rsplit('.', 1)
+    try:
+        mod = __import__(module, fromlist=[object_, ])
+    except ImportError as e:
+        raise ImportError("Failed to load {0}".format(dotted_path)) from e
+    return getattr(mod, object_)
+
+
+def load_handlers(handler_mapping):
+    """
+    Given a dictionary mapping which looks like the following, import the
+    objects based on the dotted path and yield the packet type and handler as
+    pairs.
+
+    If the special string '*' is passed, don't process that, pass it on as it
+    is a wildcard.
+
+    If an non-string object is given for either packet or handler (key or
+    value) assume these are the objects to use and yield them.
+
+    {
+        'rfxcom.protocol.Status': 'home.collect.logging_handler',
+        'rfxcom.protocol.Elec': 'home.collect.elec_handler',
+        'rfxcom.protocol.TempHumidity': 'home.collect.temp_humidity_handler',
+        '*': 'home.collect.logging_handler'
+    }
+    """
+
+    handlers = {}
+
+    for packet_type, handler in handler_mapping.items():
+
+        if packet_type == '*':
+            Packet = packet_type
+        elif isinstance(packet_type, str):
+            Packet = importer(packet_type)
+        else:
+            Packet = packet_type
+
+        if isinstance(handler, str):
+            Handler = importer(handler)
+        else:
+            Handler = handler
+
+        print(Packet)
+
+        if Packet in handlers:
+            raise HandlerConfigError(
+                "Handler already provided for packet %s" % Packet)
+
+        handlers[Packet] = Handler
+
+    return handlers
 
 
 class BaseHandler:

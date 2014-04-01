@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from flask.views import MethodView
 from werkzeug.exceptions import BadRequest
 
@@ -9,12 +9,20 @@ from home.ts.models import Device, Series, DataPoint
 api = Blueprint('Dashboard API', __name__)
 
 
-def register_api(view, endpoint, url, pk='resource_id', pk_type='int'):
+def register_api(view, endpoint, url):
     view_func = view.as_view(endpoint)
-    api.add_url_rule(url, defaults={pk: None},
+
+    api.add_url_rule(url, defaults={'resource_id': None, 'name': None},
                      view_func=view_func, methods=['GET', ])
+
     api.add_url_rule(url, view_func=view_func, methods=['POST', ])
-    api.add_url_rule('%s<%s:%s>' % (url, pk_type, pk), view_func=view_func,
+
+    api.add_url_rule('%s<int:resource_id>' % (url), defaults={'name': None},
+                     view_func=view_func,
+                     methods=['GET', 'PUT', 'DELETE'])
+
+    api.add_url_rule('%s<string:name>' % (url), defaults={'resource_id': None},
+                     view_func=view_func,
                      methods=['GET', 'PUT', 'DELETE'])
 
 
@@ -46,10 +54,16 @@ class Resource(MethodView):
         return jsonify(results=[i.as_dict() for i in qs], **kwargs)
 
     @kwargs_from_request
-    def get(self, resource_id=None, **kwargs):
+    def get(self, resource_id=None, name=None, **kwargs):
 
         if resource_id is not None:
             resource = self.model.query.filter_by(id=resource_id).first()
+            if not resource:
+                abort(404)
+            return jsonify(resource.as_dict())
+
+        if name is not None:
+            resource = self.model.query.filter_by(name=name).first()
             return jsonify(resource.as_dict())
 
         page = max(int(request.args.get('page', '0')), 1)
