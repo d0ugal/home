@@ -50,8 +50,6 @@ def load_handlers(handler_mapping):
         else:
             Handler = handler
 
-        print(Packet)
-
         if Packet in handlers:
             raise HandlerConfigError(
                 "Handler already provided for packet %s" % Packet)
