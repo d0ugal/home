@@ -1,0 +1,12 @@
+include LICENSE README.rst bootstrap.sh Vagrantfime
+
+recursive-include home *
+recursive-include tests *
+recursive-include docs *
+
+recursive-exclude home *.pyc
+recursive-exclude home *.pyo
+recursive-exclude docs *.pyc
+recursive-exclude docs *.pyo
+recursive-exclude tests *.pyc
+recursive-exclude tests *.pyo
