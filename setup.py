@@ -25,7 +25,6 @@ def find_version(*parts):
     finder.visit(ast.parse(read(*parts)))
     return finder.version
 
-
 setup(
     name="home",
     version=find_version("home", "__init__.py"),
@@ -35,7 +34,7 @@ setup(
     long_description=read('README.rst'),
     author='Dougal Matthews',
     author_email='dougal@dougalmatthews.com',
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=["tests*"]),
     install_requires=[
         'alembic==0.6.3',
         'Flask-SQLAlchemy==1.0',
@@ -45,6 +44,8 @@ setup(
         'simplejson==3.3.3',
         'SQLAlchemy==0.9.3',
     ],
+    include_package_data=True,
+    platforms='any',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
