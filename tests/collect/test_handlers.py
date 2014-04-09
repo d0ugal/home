@@ -31,7 +31,7 @@ class HandlerLoadingTestCase(BaseTestCase):
 
         result = load_handlers({})
 
-        self.assertEquals(result, {})
+        self.assertEqual(result, {})
 
     def test_load_handlers_duplicate(self):
 
@@ -54,7 +54,7 @@ class HandlerLoadingTestCase(BaseTestCase):
             '*': 'home.collect.logging_handler',
         })
 
-        self.assertEquals(result, {
+        self.assertEqual(result, {
             '*': logging_handler
         })
 
@@ -66,7 +66,7 @@ class HandlerLoadingTestCase(BaseTestCase):
             Status: h,
         })
 
-        self.assertEquals(result, {
+        self.assertEqual(result, {
             Status: h
         })
 
@@ -81,14 +81,14 @@ class BaseHandlerTestCase(BaseTestCase):
 
     def test_logger(self):
 
-        self.assertEquals(self.handler.log.name, 'home.collect.BaseHandler')
+        self.assertEqual(self.handler.log.name, 'home.collect.BaseHandler')
 
     def test_format_packet(self):
 
         formatted = self.handler.format_packet(self.packet.raw)
         expected = '0x11 0x5a 0x01 0x00 0x2e 0xb2 0x03 0x00 0x00'
 
-        self.assertEquals(formatted, expected)
+        self.assertEqual(formatted, expected)
 
 
 class LoggingHandlerTestCase(BaseTestCase):
@@ -102,7 +102,7 @@ class LoggingHandlerTestCase(BaseTestCase):
 
     def test_logger(self):
 
-        self.assertEquals(self.handler.log.name, self.log_name)
+        self.assertEqual(self.handler.log.name, self.log_name)
 
     def test_packet_logged(self):
 
@@ -110,7 +110,7 @@ class LoggingHandlerTestCase(BaseTestCase):
 
             self.handler(self.packet)
 
-            self.assertEquals(cm.output, [
+            self.assertEqual(cm.output, [
                 'WARNING:home.collect.LoggingHandler:Ignoring packet: 0x11 '
                 '0x5a 0x01 0x00 0x2e 0xb2 0x03 0x00 0x00'
             ])
@@ -133,7 +133,7 @@ class RecordingHanderTestCase(BaseTestCase):
     def test_logger(self):
 
         n = self.handler.log.name
-        self.assertEquals(n, 'home.collect.RecordingHander')
+        self.assertEqual(n, 'home.collect.RecordingHander')
 
     @patch('home.ts.models.DataPoint.record')
     def test_record(self, mock_record):
@@ -151,7 +151,7 @@ class RecordingHanderTestCase(BaseTestCase):
 
         with self.assertLogs(self.log_name, level='ERROR') as cm:
             self.handler(self.packet)
-            self.assertEquals(cm.output, [
+            self.assertEqual(cm.output, [
                 "ERROR:home.collect.RecordingHander:Failed to find "
                 "not_a_correct_attribute in packet. Key list: ['current_watts'"
                 ", 'id', 'packet_type', 'sub_type', 'total_watts']"
