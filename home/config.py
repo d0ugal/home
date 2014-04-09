@@ -10,28 +10,42 @@ STATIC_FOLDER = path.join(PROJECT_PATH, 'dash', 'static')
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
+        'standard': {
             'format': '%(asctime)s %(levelname)-8s %(name)-35s %(message)s'
         },
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'stream': stdout,
-            'formatter': 'verbose'
+            'formatter': 'standard'
+        },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': path.join(PROJECT_PATH, "home.log"),
+            'maxBytes': 10 * 1024 * 1024,
+        },
+        'file-full': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': path.join(PROJECT_PATH, "home-full.log"),
+            'maxBytes': 10 * 1024 * 1024,
         },
     },
     'loggers': {
         'rfxcom': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file', 'file-full'],
             'propagate': True,
             'level': 'DEBUG',
         },
         'home': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file', 'file-full'],
             'propagate': True,
             'level': 'DEBUG',
         }
