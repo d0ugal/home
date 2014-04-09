@@ -25,6 +25,7 @@ def find_version(*parts):
     finder.visit(ast.parse(read(*parts)))
     return finder.version
 
+
 setup(
     name="home",
     version=find_version("home", "__init__.py"),
@@ -58,7 +59,6 @@ setup(
     entry_points={
         'console_scripts': [
             'home-collect = home.collect:run',
-            'home-report = home.report:run',
             'home-syncdb = home.util:syncdb',
             'home-dash = home.dash:run',
         ]
