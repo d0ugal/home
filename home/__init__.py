@@ -12,12 +12,16 @@ def create_app(config=None):
     app = Flask(__name__,
                 static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
 
+    app.config['SECRET_KEY'] = 'ssh, its a secret.'
+
     app.config.from_object('home.config')
     app.config.from_object(config)
 
     app.register_blueprint(web)
     app.register_blueprint(api, url_prefix='/api')
+
     db.init_app(app)
+
     return app
 
 app = create_app()

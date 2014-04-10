@@ -68,7 +68,8 @@ class Resource(MethodView):
 
         page = max(int(request.args.get('page', '0')), 1)
 
-        results = self.model.query.filter_by(**kwargs)
+        results = self.model.query.filter_by(**kwargs).order_by(
+            self.model.created_at.desc())
         count = results.count()
         offset = (page - 1) * self.page_size
         results = results.limit(self.page_size).offset(offset)

@@ -4,3 +4,4 @@ Flask-Testing
 nose
 sphinx
 sphinx_rtd_theme
+flask-debugtoolbar
