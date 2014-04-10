@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Numeric, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Numeric, Integer, String, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.orm import relationship, backref
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -21,13 +21,11 @@ class DataPoint(db.Model, SerialiseMixin):
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, nullable=False)
     value = Column(Numeric, nullable=False)
-    series_id = Column(Integer, ForeignKey('series.id'))
-    device_id = Column(Integer, ForeignKey('device.id'))
 
-    series = relationship("Series",
-                          backref=backref('data_points', order_by=id))
-    device = relationship("Device",
-                          backref=backref('data_points', order_by=id))
+    device_series_id = Column(
+        Integer, ForeignKey('device_series.id'), nullable=False)
+    device_series = relationship(
+        "Series", backref=backref('data_points', order_by=id))
 
     def __init__(self, series, device, value, created_at=None):
         self.created_at = datetime.utcnow()
@@ -50,6 +48,34 @@ class DataPoint(db.Model, SerialiseMixin):
             self.series, self.device, self.value, self.created_at)
 
 
+class DeviceSeries(db.Model, SerialiseMixin):
+    __tablename__ = 'device_series'
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, nullable=False)
+    series_id = Column(Integer, ForeignKey('series.id'), nullable=False)
+    device_id = Column(Integer, ForeignKey('device.id'), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint('series_id', 'device_id', name='_series_device_uc'),
+    )
+
+    def __init__(self, series_id, device_id):
+        super().__init__()
+        self.created_at = datetime.utcnow()
+        self.name = name
+
+    @classmethod
+    def get_or_create(cls, **kwargs):
+        r = get_or_create(cls, **kwargs)
+        return r
+
+    def __repr__(self):
+        return "DeviceSeries(device_id=%s, series_id=%s)" % (
+            self.device_id, self.series_id)
+
+
+
 class Series(db.Model, SerialiseMixin):
     __tablename__ = 'series'
 
@@ -69,7 +95,6 @@ class Series(db.Model, SerialiseMixin):
 
     def __repr__(self):
         return "Series(name=%r)" % (self.name)
-
 
 class Device(db.Model, SerialiseMixin):
     __tablename__ = 'device'

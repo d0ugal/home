@@ -37,7 +37,7 @@ setup(
     author_email='dougal@dougalmatthews.com',
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
-        'alembic==0.6.3',
+        'alembic==0.6.4',
         'Flask-SQLAlchemy==1.0',
         'Flask==0.10.1',
         'psycopg2==2.5.2',
