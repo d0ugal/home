@@ -2,7 +2,7 @@ from datetime import datetime
 
 from tests.base import BaseTestCase
 
-from home.ts.models import Series, Device, DataPoint
+from home.ts.models import Series, Device, DataPoint, DeviceSeries
 
 
 class SeriesModelTestCase(BaseTestCase):
@@ -40,8 +40,8 @@ class DataPointModelTestCase(BaseTestCase):
 
         self.series = Series(name="series_a")
         self.device = Device(82, 1, '0xAAAA', name="device_a")
-        self.data_point = DataPoint(
-            self.series, self.device, 10, created_at=now)
+        self.device_series = DeviceSeries(self.device, self.series)
+        self.data_point = DataPoint(self.device_series, 10, created_at=now)
 
         self.insert(self.device)
         self.insert(self.series)

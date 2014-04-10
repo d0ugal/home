@@ -2,7 +2,7 @@ from datetime import datetime
 
 from tests.base import BaseTestCase
 
-from home.ts.models import Device, Series, DataPoint
+from home.ts.models import Device, Series, DataPoint, DeviceSeries
 
 
 class ValuesResourceTestCase(BaseTestCase):
@@ -14,7 +14,8 @@ class ValuesResourceTestCase(BaseTestCase):
 
         self.series = Series(name="Test series")
         self.device = Device(82, 1, '0xAAAA', name="Test device")
-        self.value = DataPoint(self.series, self.device, 10, created_at=now)
+        self.device_series = DeviceSeries(self.device, self.series)
+        self.value = DataPoint(self.device_series, 10, created_at=now)
 
         self.insert(self.device)
         self.insert(self.series)

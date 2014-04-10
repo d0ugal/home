@@ -25,27 +25,27 @@ class DataPoint(db.Model, SerialiseMixin):
     device_series_id = Column(
         Integer, ForeignKey('device_series.id'), nullable=False)
     device_series = relationship(
-        "Series", backref=backref('data_points', order_by=id))
+        "DeviceSeries", backref=backref('data_points', order_by=id))
 
-    def __init__(self, series, device, value, created_at=None):
+    def __init__(self, device_series, value, created_at=None):
         self.created_at = datetime.utcnow()
         super().__init__()
-        self.series = series
-        self.device = device
+        self.device_series = device_series
         self.value = value
         self.created_at = created_at
 
     @classmethod
     def record(cls, series, device, value, created_at=None):
-        data_point = DataPoint(series=series, device=device, value=value)
+        ds = DeviceSeries.get_or_create(device=device, series=series)
+        data_point = DataPoint(device_series=ds, value=value)
         if created_at is None:
             data_point.created_at = datetime.utcnow()
         db.session.add(data_point)
         return data_point
 
     def __repr__(self):
-        return "<Data Point(%s, %s, value=%s, created_at=%s)>" % (
-            self.series, self.device, self.value, self.created_at)
+        return "<Data Point(%s, value=%s, created_at=%s)>" % (
+            self.device_series, self.value, self.created_at)
 
 
 class DeviceSeries(db.Model, SerialiseMixin):
@@ -56,19 +56,24 @@ class DeviceSeries(db.Model, SerialiseMixin):
     series_id = Column(Integer, ForeignKey('series.id'), nullable=False)
     device_id = Column(Integer, ForeignKey('device.id'), nullable=False)
 
+    device = relationship(
+        "Device", backref=backref('device_series', order_by=id))
+    series  = relationship(
+        "Series", backref=backref('device_series', order_by=id))
+
     __table_args__ = (
         UniqueConstraint('series_id', 'device_id', name='_series_device_uc'),
     )
 
-    def __init__(self, series_id, device_id):
+    def __init__(self, device, series):
         super().__init__()
         self.created_at = datetime.utcnow()
-        self.name = name
+        self.series = series
+        self.device = device
 
     @classmethod
     def get_or_create(cls, **kwargs):
-        r = get_or_create(cls, **kwargs)
-        return r
+        return get_or_create(cls, **kwargs)
 
     def __repr__(self):
         return "DeviceSeries(device_id=%s, series_id=%s)" % (
@@ -107,10 +112,11 @@ class Device(db.Model, SerialiseMixin):
     device_id = Column(String(20), nullable=False, unique=True)
 
     series = relationship("Series",
-        secondary="join(DataPoint, Series, DataPoint.series_id == Series.id)",
-        primaryjoin=("and_(Device.id == DataPoint.device_id, Series.id == "
-                     "DataPoint.series_id)"),
-        secondaryjoin="Series.id == DataPoint.series_id"
+        secondary=("join(DeviceSeries, Series, DeviceSeries.series_id == "
+                   "Series.id)"),
+        primaryjoin=("and_(Device.id == DeviceSeries.device_id, Series.id == "
+                     "DeviceSeries.series_id)"),
+        secondaryjoin="Series.id == DeviceSeries.series_id"
     )
 
     def __init__(self, device_type, device_sub_type, device_id, name=None):

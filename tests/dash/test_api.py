@@ -2,7 +2,7 @@ from datetime import datetime
 
 from tests.base import BaseTestCase
 
-from home.ts.models import Device, Series, DataPoint
+from home.ts.models import Device, Series, DataPoint, DeviceSeries
 
 
 class DevicesResourceTestCase(BaseTestCase):
@@ -80,7 +80,8 @@ class ValuesResourceTestCase(BaseTestCase):
 
         self.series = Series(name="Test series")
         self.device = Device(82, 1, '0xAAAA', name="Test device")
-        self.value = DataPoint(self.series, self.device, 10, created_at=now)
+        self.device_series = DeviceSeries(self.device, self.series)
+        self.value = DataPoint(self.device_series, 10, created_at=now)
 
         self.insert(self.device)
         self.insert(self.series)
@@ -103,26 +104,3 @@ class ValuesResourceTestCase(BaseTestCase):
         r = self.client.get('/api/values/1000')
 
         self.assertEqual(r.status_code, 404)
-
-
-class SeriesRangeResourceTestCase(BaseTestCase):
-
-    def setUp(self):
-        super().setUp()
-
-        now = datetime.now()
-
-        self.series = Series(name="series_a")
-        self.device = Device(82, 1, '0xAAAA', name="device_a")
-        self.value = DataPoint(self.series, self.device, 10, created_at=now)
-
-        self.insert(self.device)
-        self.insert(self.series)
-        self.insert(self.value)
-
-    def test_get(self):
-
-        r = self.client.get(
-            '/data/series_a/device_a/2014-03-27 00:00/2014-03-28 00:00/')
-
-        self.assertEqual(r.status_code, 200)

@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import render_template, jsonify, Blueprint
 
 from home.ts import SeriesGenerator
-from home.ts.models import DataPoint, Device, Series
+from home.ts.models import DeviceSeries, Device, Series
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -13,7 +13,7 @@ web = Blueprint('Dashboard Web', __name__)
 def dashboard():
 
     devices = Device.query\
-        .join(DataPoint)\
+        .join(DeviceSeries)\
         .join(Series)\
         .order_by(Device.name)\
         .all()
