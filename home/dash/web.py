@@ -1,11 +1,6 @@
-from datetime import datetime
+from flask import render_template, Blueprint
 
-from flask import render_template, jsonify, Blueprint
-from sqlalchemy.orm import joinedload, aliased
-from sqlalchemy.sql import select
-
-from home.ts import SeriesGenerator
-from home.ts.models import db, DeviceSeries, Device, Series, DataPoint
+from home.ts.models import db
 
 
 web = Blueprint('Dashboard Web', __name__)

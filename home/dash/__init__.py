@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser(description='.')
 parser.add_argument('--debug', action='store_true')
 
+
 def run():
 
     args = parser.parse_args()
@@ -12,7 +13,7 @@ def run():
 
     try:
         from flask_debugtoolbar import DebugToolbarExtension
-        toolbar = DebugToolbarExtension(app)
+        DebugToolbarExtension(app)
     except ImportError:
         pass
 

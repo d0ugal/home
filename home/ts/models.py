@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import (Column, Numeric, Integer, String, ForeignKey, DateTime,
-                        UniqueConstraint, inspect)
+                        UniqueConstraint)
 from sqlalchemy.orm import relationship, backref
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -60,7 +60,7 @@ class DeviceSeries(db.Model, SerialiseMixin):
 
     device = relationship(
         "Device", backref=backref('device_series'), lazy='joined')
-    series  = relationship(
+    series = relationship(
         "Series", backref=backref('device_series'), lazy='joined')
 
     __table_args__ = (
@@ -89,7 +89,6 @@ class DeviceSeries(db.Model, SerialiseMixin):
             self.device_id, self.series_id)
 
 
-
 class Series(db.Model, SerialiseMixin):
     __tablename__ = 'series'
 
@@ -110,6 +109,7 @@ class Series(db.Model, SerialiseMixin):
     def __repr__(self):
         return "Series(name=%r)" % (self.name)
 
+
 class Device(db.Model, SerialiseMixin):
     __tablename__ = 'device'
 
@@ -120,7 +120,8 @@ class Device(db.Model, SerialiseMixin):
     device_sub_type = Column(Integer)
     device_id = Column(String(20), nullable=False, unique=True)
 
-    series = relationship("Series",
+    series = relationship(
+        "Series",
         secondary=("join(DeviceSeries, Series, DeviceSeries.series_id == "
                    "Series.id)"),
         primaryjoin=("and_(Device.id == DeviceSeries.device_id, Series.id == "
