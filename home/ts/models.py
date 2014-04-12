@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Numeric, Integer, String, ForeignKey, DateTime, UniqueConstraint
+from sqlalchemy import (Column, Numeric, Integer, String, ForeignKey, DateTime,
+                        UniqueConstraint, inspect)
 from sqlalchemy.orm import relationship, backref
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -19,13 +20,14 @@ class DataPoint(db.Model, SerialiseMixin):
     __tablename__ = 'data_point'
 
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, nullable=False, index=True)
     value = Column(Numeric, nullable=False)
 
     device_series_id = Column(
         Integer, ForeignKey('device_series.id'), nullable=False)
     device_series = relationship(
-        "DeviceSeries", backref=backref('data_points', order_by=id))
+        "DeviceSeries", order_by=created_at.desc(),
+        backref=backref('data_points'))
 
     def __init__(self, device_series, value, created_at=None):
         self.created_at = datetime.utcnow()
@@ -57,9 +59,9 @@ class DeviceSeries(db.Model, SerialiseMixin):
     device_id = Column(Integer, ForeignKey('device.id'), nullable=False)
 
     device = relationship(
-        "Device", backref=backref('device_series', order_by=id))
+        "Device", backref=backref('device_series'), lazy='joined')
     series  = relationship(
-        "Series", backref=backref('device_series', order_by=id))
+        "Series", backref=backref('device_series'), lazy='joined')
 
     __table_args__ = (
         UniqueConstraint('series_id', 'device_id', name='_series_device_uc'),
@@ -70,6 +72,13 @@ class DeviceSeries(db.Model, SerialiseMixin):
         self.created_at = datetime.utcnow()
         self.series = series
         self.device = device
+
+    @property
+    def latest_reading(self):
+        return DataPoint.query\
+            .filter_by(device_series=self)\
+            .order_by(DataPoint.created_at.desc())\
+            .limit(1).first()
 
     @classmethod
     def get_or_create(cls, **kwargs):

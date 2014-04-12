@@ -2,11 +2,14 @@
 
 {% block content %}
 
-    {% for device in devices %}
-        <h2>{{ device.name}}</h2>
-        {% for series in device.series %}
-            <h3>{{ series.name }}</h4>
+    {% for device_name, series_list in devices.items() %}
+
+        <h2>{{ device_name }}</h2>
+
+        {% for series in series_list %}
+            <p>{{ series.name }}, {{ series.value }}, {{ series.created_at }}</p>
         {% endfor %}
+
     {% endfor %}
 
 {% endblock %}
