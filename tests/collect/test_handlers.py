@@ -1,4 +1,7 @@
+from sys import version_info
 from unittest.mock import Mock, patch, ANY
+from unittest import skipIf
+
 from tests.base import BaseTestCase
 
 from rfxcom.protocol import Status
@@ -104,6 +107,7 @@ class LoggingHandlerTestCase(BaseTestCase):
 
         self.assertEqual(self.handler.log.name, self.log_name)
 
+    @skipIf(version_info < (3, 4), "Python 3.4 required.")
     def test_packet_logged(self):
 
         with self.assertLogs(self.log_name, level='INFO') as cm:
@@ -142,6 +146,7 @@ class RecordingHanderTestCase(BaseTestCase):
 
         mock_record.assert_called_once_with(ANY, ANY, 650)
 
+    @skipIf(version_info < (3, 4), "Python 3.4 required.")
     @patch('home.ts.models.DataPoint.record')
     def test_record_missing(self, mock_record):
 
