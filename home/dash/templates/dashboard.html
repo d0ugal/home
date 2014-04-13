@@ -4,11 +4,33 @@
 
     {% for device_name, series_list in devices.items() %}
 
-        <h2>{{ device_name }}</h2>
+            <div class="col-sm-3 col-xs-6">
 
-        {% for series in series_list %}
-            <p>{{ series.name }}, {{ series.value }}, {{ series.created_at }}</p>
-        {% endfor %}
+                <div class="small-box bg-{{ loop.cycle('aqua', 'green', 'yellow', 'red', 'blue') }}">
+
+                    <div class="inner">
+
+                        <h3>
+                            {{ device_name }}
+                        </h3>
+
+                        {% for series in series_list %}
+
+                            <p>
+                                {{ series.name }}, {{ series.value }}<br/>
+                                <time datetime="{{ series.created_at }}">
+                                        {{ series.created_at }}
+                                </time>
+                            </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
 
     {% endfor %}
 

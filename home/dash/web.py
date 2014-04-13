@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint
 
-from home.ts.models import db
+from home.ts.models import db, Device
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -46,3 +46,11 @@ def dashboard():
         })
 
     return render_template('dashboard.html', devices=structured)
+
+
+@web.route('/device/<device_name>/')
+def device(device_name):
+
+    device = Device.query.filter_by(name=device_name).first()
+
+    return render_template('device.html', device=device)
