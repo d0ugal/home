@@ -1,5 +1,5 @@
 from sqlalchemy.sql import text
-from flask import render_template, Blueprint, abort
+from flask import render_template, Blueprint
 
 from home.ts.models import db, Device
 
@@ -10,6 +10,7 @@ web = Blueprint('Dashboard Web', __name__)
 @web.context_processor
 def inject_devices():
     return dict(devices=Device.query.all())
+
 
 @web.route('/')
 @web.route('/device/<device_name>/')
@@ -64,7 +65,8 @@ def dashboard(device_name=None):
     else:
         template = 'dashboard.html'
 
-    return render_template(template,
+    return render_template(
+        template,
         device_readings=structured,
         device_name=device_name
     )
