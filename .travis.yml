@@ -10,6 +10,14 @@ script:
 notifications:
   irc: chat.freenode.net#python-home
 addons:
-  postgresql: "9.3"
+  postgresql: '9.3'
 before_script:
-  - psql -c 'create database test_home;' -U postgres
+- psql -c 'create database test_home;' -U postgres
+deploy:
+  provider: pypi
+  user: home
+  password:
+    secure: WH4Lvh33Rh1E3SJwTBk/OY6GrCzW1Q1GuvcBoMKmm/Pg6gTyTZZRvZEUs0Zp+wstkMs8DMxZPlrLc+0mW2g43lQ3eUBFdxb2KXVgesavuJBbA6ni5jJV1Wu6t8aBkssxDtOoQn7vRtvYfObixMSmu32maqOqUBpz7qDGFLHBZyE=
+  on:
+    tags: true
+    repo: d0ugal/home
