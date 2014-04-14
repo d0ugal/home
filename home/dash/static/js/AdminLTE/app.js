@@ -6,7 +6,7 @@
  !**/
 
 /*
- * Global variables. If you change any of these vars, don't forget 
+ * Global variables. If you change any of these vars, don't forget
  * to change the values in the less files!
  */
 var left_side_width = 220; //Sidebar width in pixels
@@ -41,11 +41,11 @@ $(function() {
     //Activate tooltips
     $("[data-toggle='tooltip']").tooltip();
 
-    /*     
+    /*
      * Add collapse and remove events to boxes
      */
     $("[data-widget='collapse']").click(function() {
-        //Find the box parent        
+        //Find the box parent
         var box = $(this).parents(".box").first();
         //Find the body and the footer
         var bf = box.find(".box-body, .box-footer");
@@ -83,7 +83,7 @@ $(function() {
     });
 
     $("[data-widget='remove']").click(function() {
-        //Find the box parent        
+        //Find the box parent
         var box = $(this).parents(".box").first();
         box.slideUp();
     });
@@ -91,13 +91,13 @@ $(function() {
     /* Sidebar tree view */
     $(".sidebar .treeview").tree();
 
-    /* 
+    /*
      * Make sure that the sidebar is streched full height
      * ---------------------------------------------
      * We are gonna assign a min-height value every time the
      * wrapper gets resized and upon page load. We will use
      * Ben Alman's method for detecting the resize event.
-     * 
+     *
      **/
     function _fix() {
         //Get window height and the wrapper height
@@ -125,7 +125,7 @@ $(function() {
     fix_sidebar();
 
     /*
-     * We are gonna initialize all checkbox and radio inputs to 
+     * We are gonna initialize all checkbox and radio inputs to
      * iCheck plugin in.
      * You can find the documentation at http://fronteed.com/iCheck/
      */
@@ -134,98 +134,7 @@ $(function() {
         radioClass: 'iradio_minimal'
     });
 
-    /* For demo purposes */
-    var demo = $("<div />").css({
-        position: "fixed",
-        top: "150px",
-        right: "0",
-        background: "rgba(0, 0, 0, 0.7)",
-        "border-radius": "5px 0px 0px 5px",
-        padding: "10px 15px",
-        "font-size": "16px",
-        "z-index": "999999",
-        cursor: "pointer",
-        color: "#ddd"
-    }).html("<i class='fa fa-gear'></i>").addClass("no-print");
-
-    var demo_settings = $("<div />").css({
-        "padding": "10px",
-        position: "fixed",
-        top: "130px",
-        right: "-200px",
-        background: "#fff",
-        border: "3px solid rgba(0, 0, 0, 0.7)",
-        "width": "200px",
-        "z-index": "999999"
-    }).addClass("no-print");
-    demo_settings.append(
-            "<h4 style='margin: 0 0 5px 0; border-bottom: 1px dashed #ddd; padding-bottom: 3px;'>Layout Options</h4>"
-            + "<div class='form-group no-margin'>"
-            + "<div class='.checkbox'>"
-            + "<label>"
-            + "<input type='checkbox' onchange='change_layout();'/> "
-            + "Fixed layout"
-            + "</label>"
-            + "</div>"
-            + "</div>"
-            );
-    demo_settings.append(
-            "<h4 style='margin: 0 0 5px 0; border-bottom: 1px dashed #ddd; padding-bottom: 3px;'>Skins</h4>"
-            + "<div class='form-group no-margin'>"
-            + "<div class='.radio'>"
-            + "<label>"
-            + "<input name='skins' type='radio' onchange='change_skin(\"skin-black\");' /> "
-            + "Black"
-            + "</label>"
-            + "</div>"
-            + "</div>"
-
-            + "<div class='form-group no-margin'>"
-            + "<div class='.radio'>"
-            + "<label>"
-            + "<input name='skins' type='radio' onchange='change_skin(\"skin-blue\");' checked='checked'/> "
-            + "Blue"
-            + "</label>"
-            + "</div>"
-            + "</div>"
-            );
-
-    demo.click(function() {
-        if (!$(this).hasClass("open")) {
-            $(this).css("right", "200px");
-            demo_settings.css("right", "0");
-            $(this).addClass("open");
-        } else {
-            $(this).css("right", "0");
-            demo_settings.css("right", "-200px");
-            $(this).removeClass("open")
-        }
-    });
-
-    $("body").append(demo);
-    $("body").append(demo_settings);
 });
-function fix_sidebar() {
-    //Make sure the body tag has the .fixed class
-    if (!$("body").hasClass("fixed")) {
-        return;
-    }
-
-    //Add slimscroll
-    $(".sidebar").slimscroll({
-        height: ($(window).height() - $(".header").height()) + "px",
-        color: "rgba(0,0,0,0.2)"
-    });
-}
-function change_layout() {
-    $("body").toggleClass("fixed");
-    fix_sidebar();
-}
-function change_skin(cls) {
-    $("body").removeClass("skin-blue skin-black");
-    $("body").addClass(cls);
-}
-/*END DEMO*/
 $(window).load(function() {
     /*! pace 0.4.17 */
     (function() {
@@ -546,12 +455,12 @@ $(window).load(function() {
     }).call(this);
 });
 
-/* 
- * BOX REFRESH BUTTON 
+/*
+ * BOX REFRESH BUTTON
  * ------------------
  * This is a custom plugin to use with the compenet BOX. It allows you to add
  * a refresh button to the box. It converts the box's state to a loading state.
- * 
+ *
  * USAGE:
  *  $("#box-widget").boxRefresh( options );
  * */
@@ -628,13 +537,13 @@ $(window).load(function() {
  * SIDEBAR MENU
  * ------------
  * This is a custom plugin for the sidebar menu. It provides a tree view.
- * 
+ *
  * Usage:
  * $(".sidebar).tree();
- * 
+ *
  * Note: This plugin does not accept any options. Instead, it only requires a class
  *       added to the element that contains a sub-menu.
- *       
+ *
  * When used with the sidebar, for example, it would look something like this:
  * <ul class='sidebar-menu'>
  *      <li class="treeview active">
@@ -644,7 +553,7 @@ $(window).load(function() {
  *          </ul>
  *      </li>
  * </ul>
- * 
+ *
  * Add .active class to <li> elements if you want the menu to be open automatically
  * on page load. See above for an example.
  */
@@ -752,7 +661,7 @@ $(window).load(function() {
 /*
  * jQuery resize event - v1.1 - 3/14/2010
  * http://benalman.com/projects/jquery-resize-plugin/
- * 
+ *
  * Copyright (c) 2010 "Cowboy" Ben Alman
  * Dual licensed under the MIT and GPL licenses.
  * http://benalman.com/about/license/
@@ -816,8 +725,8 @@ $(window).load(function() {
 /*!
  * SlimScroll https://github.com/rochal/jQuery-slimScroll
  * =======================================================
- * 
- * Copyright (c) 2011 Piotr Rochala (http://rocha.la) Dual licensed under the MIT 
+ *
+ * Copyright (c) 2011 Piotr Rochala (http://rocha.la) Dual licensed under the MIT
  */
 (function(f) {
     jQuery.fn.extend({slimScroll: function(h) {

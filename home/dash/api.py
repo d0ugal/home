@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify, abort
 from flask.views import MethodView
 from werkzeug.exceptions import BadRequest
 
-from home.ts.models import Device, Series, DataPoint
+from home.ts.models import Device, Series, DataPoint, DeviceSeries
 
 api = Blueprint('Dashboard API', __name__)
 
@@ -26,7 +26,7 @@ def register_api(view, endpoint, url):
                      methods=['GET', 'PUT', 'DELETE'])
 
 
-def kwargs_from_request(f):
+def kwarg_json_query(f):
 
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -37,7 +37,7 @@ def kwargs_from_request(f):
             json = {}
 
         if isinstance(json, dict):
-            kwargs.update(json)
+            kwargs['query'] = json
         else:
             raise Exception("Invalid JSON")
 
@@ -46,15 +46,20 @@ def kwargs_from_request(f):
     return wrapper
 
 
-class Resource(MethodView):
+class JSONResource(MethodView):
+
+    def jsonify_qs(self, qs, **kwargs):
+
+        dicts = [i.as_dict() for i in qs]
+
+        return jsonify(results=dicts, count=len(dicts), **kwargs)
+
+
+class Resource(JSONResource):
 
     page_size = 100
 
-    def jsonify_qs(self, qs, **kwargs):
-        return jsonify(results=[i.as_dict() for i in qs], **kwargs)
-
-    @kwargs_from_request
-    def get(self, resource_id=None, name=None, **kwargs):
+    def get(self, resource_id=None, name=None):
 
         if resource_id is not None:
             resource = self.model.query.filter_by(id=resource_id).first()
@@ -68,12 +73,11 @@ class Resource(MethodView):
 
         page = max(int(request.args.get('page', '0')), 1)
 
-        results = self.model.query.filter_by(**kwargs).order_by(
+        results = self.model.query.order_by(
             self.model.created_at.desc())
-        count = results.count()
         offset = (page - 1) * self.page_size
         results = results.limit(self.page_size).offset(offset)
-        return self.jsonify_qs(results, count=count, page=page)
+        return self.jsonify_qs(results, page=page)
 
 
 class DevicesResource(Resource):
@@ -84,10 +88,52 @@ class SeriesResource(Resource):
     model = Series
 
 
+class DeviceSeriesResource(Resource):
+    model = DeviceSeries
+
+
 class ValuesResource(Resource):
     model = DataPoint
 
 
+class SearchResource(ValuesResource):
+
+    @kwarg_json_query
+    def post(self, query=None):
+
+        device_series_id = None
+
+        if query is None:
+            abort(400)
+
+        qs = DataPoint.query.order_by(DataPoint.created_at.desc())
+
+        if 'device_id' in query and 'series_id' in query:
+
+            ds = DeviceSeries.query.filter_by(
+                device_id=query['device_id'],
+                series_id=query['series_id'],
+            ).first()
+
+            if ds is not None:
+                device_series_id = ds.id
+
+        if 'device_series_id' in query:
+            device_series_id = query['device_series_id']
+
+        if device_series_id is not None:
+            qs = qs.filter_by(device_series_id=device_series_id)
+
+        if 'start' in query and 'end' in query:
+            start = query['start']
+            end = query['end']
+            qs = qs.filter(DataPoint.created_at.between(start, end))
+
+        return self.jsonify_qs(qs.limit(10000))
+
+
 register_api(DevicesResource, 'devices', '/devices/')
 register_api(SeriesResource, 'series', '/series/')
+register_api(DeviceSeriesResource, 'device_series', '/device_series/')
 register_api(ValuesResource, 'values', '/values/')
+register_api(SearchResource, 'search', '/search/')
