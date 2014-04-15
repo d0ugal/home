@@ -10,14 +10,14 @@ function device_series_graph(device_id, series_id, id){
     }
 
     var today = new Date();
-    var yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() - 1);
 
     $.ajax({
         contentType: 'application/json',
         data: JSON.stringify({
-            "start": fmt(yesterday),
-            "end": fmt(today),
+            "start": fmt(today),
+            "end": fmt(tomorrow),
             "device_id": device_id,
             "series_id": series_id,
         }),
