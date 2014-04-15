@@ -11,7 +11,7 @@ function device_series_graph(device_id, series_id, id){
 
     var today = new Date();
     var tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() - 1);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     $.ajax({
         contentType: 'application/json',
