@@ -6,44 +6,66 @@
 
 {% block content %}
 
-    <div class="row">
+    <section class="col-lg-6 connectedSortable">
 
-        {% for device_name, series_list in device_readings.items() %}
+        <div class="box box-primary">
+            <div class="box-body no-padding">
+                <div class="table-responsive">
 
-            <div class="col-sm-4 col-xs-6">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Device</th>
+                            <th>Series</th>
+                            <th>Value</th>
+                            <th>Trend</th>
+                            <th>Updated</th>
+                        </tr>
 
-                <div class="small-box bg-{{ loop.cycle('aqua', 'green', 'yellow', 'red', 'blue') }}">
-
-                    <div class="inner">
-
-                        <h3>
-                            {{ device_name }}
-                        </h3>
-
-                        {% for series in series_list %}
-
-                            <p>
-                                {{ series.name }}, {{ series.value }}<br/>
-                                <time datetime="{{ series.created_at }}">
-                                        {{ series.created_at }}
-                                </time>
-                            </p>
-
+                        {% for device_name, series_list in device_readings.items() %}
+                                {% for series in series_list %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('.dashboard', device_name=device_name ) }}">
+                                                {{ device_name|title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ series.name|title }}</td>
+                                        <td>{{ series.value }}</td>
+                                        <td>
+                                            <span class="sparkline">{{ series.sparkline }}</span>
+                                        </td>
+                                        <td>
+                                            {{ series.created_at}}
+                                        </td>
+                                    </tr>
+                            {% endfor %}
                         {% endfor %}
-
-                    </div>
-
-                    <a href="{{ url_for('.dashboard', device_name=device_name ) }}" class="small-box-footer">
-                        More info <i class="fa fa-arrow-circle-right"></i>
-                    </a>
+                    </table>
 
                 </div>
-
             </div>
+        </div>
+
+    </section>
 
 
-        {% endfor %}
+{% endblock %}
 
-    </div>
+{% block extra_js %}
+
+    <script type="text/javascript">
+
+        $(function(){
+
+            $('.sparkline').sparkline('html', {
+                type: 'line',
+                height: '1em',
+                width: '4em',
+                lineColor: 'black'
+            });
+
+        });
+
+    </script>
 
 {% endblock %}

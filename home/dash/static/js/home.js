@@ -66,4 +66,4 @@ function device_series_graph(device_id, series_id, id){
         }
     });
 
-}
+};

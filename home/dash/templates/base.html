@@ -54,7 +54,7 @@
                         {% for device in devices %}
                         <li>
                             <a href="{{ url_for('.dashboard', device_name=device.name) }}">
-                                <i class="fa fa-th"></i> <span>{{ device.name }}</span>
+                                <i class="fa fa-th"></i> <span>{{ device.name|title }}</span>
                             </a>
                         </li>
                         {% endfor %}
@@ -86,14 +86,14 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
         <!-- Bootstrap -->
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" type="text/javascript"></script>
-        <!-- AdminLTE App -->
-        <script src="{{ url_for('static', filename='js/AdminLTE/app.js') }}" type="text/javascript"></script>
 
-        <!-- FLOT CHARTS -->
+        <script src="{{ url_for('static', filename='js/AdminLTE/app.js') }}" type="text/javascript"></script>
         <script src="{{ url_for('static', filename='js/plugins/flot/jquery.flot.min.js') }}" type="text/javascript"></script>
         <script src="{{ url_for('static', filename='js/plugins/flot/jquery.flot.resize.min.js') }}" type="text/javascript"></script>
         <script src="{{ url_for('static', filename='js/plugins/flot/jquery.flot.time.min.js') }}" type="text/javascript"></script>
+        <script src="{{ url_for('static', filename='js/plugins/sparkline/jquery.sparkline.min.js') }}" type="text/javascript"></script>
 
+        <script src="{{ url_for('static', filename='js/home.js') }}" type="text/javascript"></script>
 
         {% block extra_js %}{% endblock %}
 
