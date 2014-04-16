@@ -4,6 +4,7 @@ sudo apt-get -y update && sudo apt-get -y upgrade;
 sudo apt-get -y install \
     git-core \
     postgresql \
+    postgresql-contrib-9.1 \
     postgresql-server-dev-all \
     python-dev \
     python-pip \
@@ -36,4 +37,6 @@ host    all         all    127.0.0.1/32     password" > /etc/postgresql/9.1/main
     sudo -u postgres -- psql -c "CREATE ROLE home NOSUPERUSER CREATEDB NOCREATEROLE INHERIT LOGIN PASSWORD 'home'";
     sudo -u postgres -- createdb -T template0 -E UTF8 -O home home;
     sudo -u postgres -- createdb -T template0 -E UTF8 -O home test_home;
+sudo -u postgres -- psql -h localhost -c "CREATE EXTENSION hstore" home;
+sudo -u postgres -- psql -h localhost -c "CREATE EXTENSION hstore" test_home;
 fi
