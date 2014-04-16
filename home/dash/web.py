@@ -26,7 +26,7 @@ def dashboard(device_name=None):
         FROM data_point
         WHERE data_point.device_series_id = device_series.id
         ORDER BY data_point.created_at DESC
-        LIMIT 1000
+        LIMIT 10
     ) as latest
     FROM device_series
     JOIN device ON device.id = device_series.device_id
