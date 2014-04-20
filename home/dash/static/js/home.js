@@ -26,20 +26,27 @@ function device_series_graph(device_id, series_id, id){
         url: '/api/graph/',
         success: function(data){
 
-            var plot_data = [];
-
+            var series = [];
             var max, min;
 
-            $.each(data.results, function(i, v){
-                if (i == 0 || v.value > max) max = v.value;
-                if (i == 0 || v.value < min) min = v.value;
-                plot_data.push([new Date(v.created_at), v.value])
+            $.each(data.data, function(x, result){
+
+                var plot_data = [];
+
+                $.each(result.values, function(i, v){
+                    if (i == 0 || v.value > max) max = v.value;
+                    if (i == 0 || v.value < min) min = v.value;
+                    plot_data.push([new Date(v.created_at), v.value])
+                });
+
+                series.push(plot_data);
+
             });
 
             max = max * 1.05;
             min = min * 0.95;
 
-            var interactive_plot = $.plot(id, [plot_data], {
+            var interactive_plot = $.plot(id, series, {
                 grid: {
                     borderColor: "#f3f3f3",
                     borderWidth: 1,

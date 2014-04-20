@@ -3,7 +3,7 @@ from collections import OrderedDict
 from sqlalchemy.sql import text
 from flask import render_template, Blueprint
 
-from home.ts.models import db, Device
+from home.ts.models import db, Device, Series
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -18,6 +18,8 @@ def inject_devices():
 @web.route('/device/<device_name>/')
 def dashboard(device_name=None):
 
+    series_map = {s.id: s for s in Series.query.all()}
+
     query = """ SELECT
     device.id as device_id, device.name as device_name,
     series.id as series_id, series.name as series_name,
@@ -26,7 +28,7 @@ def dashboard(device_name=None):
         FROM data_point
         WHERE data_point.device_series_id = device_series.id
         ORDER BY data_point.created_at DESC
-        LIMIT 10
+        LIMIT 30
     ) as latest
     FROM device_series
     JOIN device ON device.id = device_series.device_id
@@ -50,6 +52,7 @@ def dashboard(device_name=None):
 
         structured[row.device_name].append({
             'series_id': row.series_id,
+            'model': series_map[row.series_id],
             'device_id': row.device_id,
             'name': row.series_name,
             'value': row.latest[0]['value'],

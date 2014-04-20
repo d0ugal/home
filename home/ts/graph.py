@@ -12,29 +12,17 @@ AGGREGATORS = {
 
 class AggregatedResultSet:
 
-    def __init__(self, group, duration, values):
+    def __init__(self, group, duration, value):
 
         self.group = group
         self.duration = duration
-        self.values = values
+        self.value = value
 
-    def aggregate(self):
-
-        aggregates = {}
-
-        for aggregator, f in AGGREGATORS.items():
-
-            aggregates[aggregator] = f([dp.value for dp in self.values])
-
-        return aggregates
-
-
-def get_method(graph_model):
-
-    if graph_model is None:
-        return
-
-    return group_values
+    def as_dict(self):
+        return {
+            'created_at': self.group,
+            'value': self.value
+        }
 
 
 def round_datetime(data_point, round_by):
@@ -44,15 +32,39 @@ def round_datetime(data_point, round_by):
     return data_point.created_at + d
 
 
-def group_values(values):
+def group_values(values, aggregator_functions):
 
     seconds = 60 * 60
 
     key = partial(round_datetime, round_by=seconds)
 
+    results = [[] for _ in aggregator_functions]
+
     for group, group_values in groupby(values, key=key):
 
         group_values = list(group_values)
 
-        yield AggregatedResultSet(group=group, duration=seconds,
-                                  values=group_values)
+        for i, aggregator_function in enumerate(aggregator_functions):
+            f = AGGREGATORS[aggregator_function]
+            value = f([dp.value for dp in group_values])
+
+            results[i].append(AggregatedResultSet(group=group,
+                              duration=seconds, value=value))
+
+    return results
+
+
+FUNCTIIONS = {
+    'minmax': partial(group_values, aggregator_functions=['min', 'max', ]),
+    'delta': partial(group_values, aggregator_functions=['delta', ])
+}
+
+
+def get_method(graph_model):
+
+    if graph_model is None:
+        return
+
+    f = FUNCTIIONS.get(graph_model.aggregator)
+
+    return f

@@ -49,11 +49,17 @@ def kwarg_json_query(f):
 
 class JSONResource(MethodView):
 
-    def jsonify_qs(self, qs, **kwargs):
+    def jsonify_qs(self, result_sets, **kwargs):
 
-        dicts = [i.as_dict() for i in qs]
+        r = []
 
-        return jsonify(results=dicts, count=len(dicts), **kwargs)
+        for result_set in result_sets:
+            r.append({
+                'values': [i.as_dict() for i in result_set],
+                'count': len(list(result_set)),
+            })
+
+        return jsonify(data=r, **kwargs)
 
 
 class Resource(JSONResource):
@@ -78,7 +84,7 @@ class Resource(JSONResource):
             self.model.created_at.desc())
         offset = (page - 1) * self.page_size
         results = results.limit(self.page_size).offset(offset)
-        return self.jsonify_qs(results, page=page)
+        return self.jsonify_qs([results, ], page=page)
 
 
 class DevicesResource(Resource):
@@ -137,8 +143,9 @@ class GraphResource(ValuesResource):
         qs = qs.limit(10000)
 
         if graph_func is not None:
-
             qs = graph_func(qs)
+        else:
+            qs = [qs, ]
 
         return self.jsonify_qs(qs)
 
