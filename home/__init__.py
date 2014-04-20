@@ -1,11 +1,13 @@
 __version__ = '0.0.13'
 
 from flask import Flask
+from flask.ext.admin import Admin
+from flask.ext.admin.contrib.sqla import ModelView
 
 from home.config import TEMPLATE_FOLDER, STATIC_FOLDER
 from home.dash.api import api
 from home.dash.web import web
-from home.ts.models import db
+from home.ts.models import db, Graph, Series, Device, DeviceSeries
 
 
 def create_app(config=None):
@@ -21,6 +23,12 @@ def create_app(config=None):
     app.register_blueprint(api, url_prefix='/api')
 
     db.init_app(app)
+
+    admin = Admin(app)
+    admin.add_view(ModelView(Device, db.session))
+    admin.add_view(ModelView(Series, db.session))
+    admin.add_view(ModelView(DeviceSeries, db.session))
+    admin.add_view(ModelView(Graph, db.session))
 
     return app
 

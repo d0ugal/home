@@ -38,6 +38,7 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
         'alembic==0.6.4',
+        'Flask-Admin==1.0.7',
         'Flask-SQLAlchemy==1.0',
         'Flask==0.10.1',
         'psycopg2==2.5.2',
