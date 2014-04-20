@@ -34,7 +34,6 @@ class ValuesResourceTestCase(BaseTestCase):
 
         self.assertEqual(r.status_code, 200)
 
-
     def test_device(self):
 
         r = self.client.get('/device/1/')
