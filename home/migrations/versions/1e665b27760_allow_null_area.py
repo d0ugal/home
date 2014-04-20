@@ -15,12 +15,10 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.alter_column('device', 'area_id',
-               existing_type=sa.INTEGER(),
-               nullable=True)
+    op.alter_column('device', 'area_id', existing_type=sa.INTEGER(),
+                    nullable=True)
 
 
 def downgrade():
-    op.alter_column('device', 'area_id',
-               existing_type=sa.INTEGER(),
-               nullable=False)
+    op.alter_column('device', 'area_id', existing_type=sa.INTEGER(),
+                    nullable=False)

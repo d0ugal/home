@@ -1,11 +1,4 @@
 
-def syncdb():
-    from home import app, db
-
-    with app.app_context():
-        db.create_all()
-
-
 def get_or_create(model, **kwargs):
 
     from home import db

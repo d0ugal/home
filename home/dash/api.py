@@ -5,7 +5,7 @@ from flask.views import MethodView
 from werkzeug.exceptions import BadRequest
 
 from home.ts import graph
-from home.ts.models import Device, Series, DataPoint, DeviceSeries
+from home.ts.models import Area, Device, Series, DataPoint, DeviceSeries
 
 api = Blueprint('Dashboard API', __name__)
 
@@ -103,6 +103,10 @@ class ValuesResource(Resource):
     model = DataPoint
 
 
+class AreasResource(Resource):
+    model = Area
+
+
 class GraphResource(ValuesResource):
 
     @kwarg_json_query
@@ -150,6 +154,7 @@ class GraphResource(ValuesResource):
         return self.jsonify_qs(qs)
 
 
+register_api(AreasResource, 'areas', '/areas/')
 register_api(DeviceSeriesResource, 'device_series', '/device_series/')
 register_api(DevicesResource, 'devices', '/devices/')
 register_api(GraphResource, 'graph', '/graph/')
