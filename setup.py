@@ -60,10 +60,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'home = home.collect:run',
-            'home-collect = home.collect:run',
-            'home-syncdb = home.util:syncdb',
-            'home-dash = home.dash:run',
+            'home = home.__main__:main'
         ]
     },
     zip_safe=False,
