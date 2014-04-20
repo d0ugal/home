@@ -11,7 +11,7 @@ web = Blueprint('Dashboard Web', __name__)
 
 @web.context_processor
 def inject_devices():
-    return dict(devices=Device.query.order_by(Device.name).all())
+    return dict(devices=Device.query.all())
 
 
 @web.route('/')
@@ -21,7 +21,7 @@ def dashboard(device_name=None):
     series_map = {s.id: s for s in Series.query.all()}
 
     query = """ SELECT
-    device.id as device_id, device.name as device_name,
+    device.id as device_id, area.name as device_name,
     series.id as series_id, series.name as series_name,
     ARRAY (
         SELECT hstore(data_point)
@@ -32,11 +32,12 @@ def dashboard(device_name=None):
     ) as latest
     FROM device_series
     JOIN device ON device.id = device_series.device_id
-    JOIN series ON series.id = device_series.series_id"""
+    JOIN series ON series.id = device_series.series_id
+    JOIN area ON area.id = device.area_id"""
 
     if device_name:
         kwargs = {'device_name': device_name}
-        query += "\n    WHERE device.name = :device_name"
+        query += "\n    WHERE area.name = :device_name"
     else:
         kwargs = {}
 

@@ -9,7 +9,7 @@ from flask.ext.script import Manager
 from home.config import TEMPLATE_FOLDER, STATIC_FOLDER
 from home.dash.api import api
 from home.dash.web import web
-from home.ts.models import db, Graph, Series, Device, DeviceSeries
+from home.ts.models import db, Graph, Series, Device, DeviceSeries, Area
 
 
 def create_app(config=None):
@@ -30,6 +30,7 @@ def create_app(config=None):
     Migrate(app, db, directory='home/migrations')
 
     admin = Admin(app)
+    admin.add_view(ModelView(Area, db.session))
     admin.add_view(ModelView(Device, db.session))
     admin.add_view(ModelView(Series, db.session))
     admin.add_view(ModelView(DeviceSeries, db.session))

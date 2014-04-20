@@ -53,8 +53,8 @@
 
                         {% for device in devices %}
                         <li>
-                            <a href="{{ url_for('.dashboard', device_name=device.name) }}">
-                                <i class="fa fa-th"></i> <span>{{ device.name|title }}</span>
+                            <a href="{{ url_for('.dashboard', device_name=device.area.name) }}">
+                                <i class="fa fa-th"></i> <span>{{ device.area.name|title }}</span>
                             </a>
                         </li>
                         {% endfor %}

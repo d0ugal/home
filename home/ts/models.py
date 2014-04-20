@@ -127,15 +127,29 @@ class Series(db.Model, SerialiseMixin):
         return "Series(name=%r)" % (self.name)
 
 
+class Area(db.Model, SerialiseMixin):
+    __tablename__ = 'area'
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, index=True, nullable=False)
+    name = Column(String(20), nullable=True, index=True, unique=True)
+
+    def __repr__(self):
+        return "Area(name=%r)" % (self.name)
+
+
 class Device(db.Model, SerialiseMixin):
     __tablename__ = 'device'
 
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, index=True, nullable=False)
-    name = Column(String(20), nullable=True, index=True, unique=True)
     device_type = Column(Integer, index=True)
     device_sub_type = Column(Integer, index=True)
     device_id = Column(String(20), nullable=False, unique=True)
+    area_id = Column(Integer, ForeignKey('area.id'), nullable=False)
+
+    area = relationship(
+        "Area", backref=backref('devices'), lazy='joined', uselist=False)
 
     series = relationship(
         "Series",
@@ -146,13 +160,12 @@ class Device(db.Model, SerialiseMixin):
         secondaryjoin="Series.id == DeviceSeries.series_id"
     )
 
-    def __init__(self, device_type, device_sub_type, device_id, name=None):
+    def __init__(self, device_type, device_sub_type, device_id):
         super().__init__()
         self.created_at = datetime.utcnow()
         self.device_type = device_type
         self.device_sub_type = device_sub_type
         self.device_id = device_id
-        self.name = name
 
     @classmethod
     def get_or_create(cls, device_type, device_sub_type, device_id):
@@ -162,4 +175,4 @@ class Device(db.Model, SerialiseMixin):
 
     def __repr__(self):
         return "Device(name=%s, ID=%r)" % (
-            self.name, self.device_id)
+            self.area, self.device_id)
