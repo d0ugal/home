@@ -1,5 +1,3 @@
-from argparse import ArgumentParser
-
 from home import app
 from home.collect.handlers import RecordingHander, LoggingHandler
 from home.collect.loop import collect
@@ -18,13 +16,7 @@ temp_humidity_handler = RecordingHander({
 logging_handler = LoggingHandler()
 
 
-parser = ArgumentParser(description='.')
-parser.add_argument('--device')
-
-
-def run():
-
-    args = parser.parse_args()
+def run(device):
 
     with app.app_context():
-        collect(args.device)
+        collect(device)

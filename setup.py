@@ -39,6 +39,7 @@ setup(
     install_requires=[
         'alembic==0.6.4',
         'Flask-Admin==1.0.7',
+        'Flask-Migrate==1.2.0',
         'Flask-SQLAlchemy==1.0',
         'Flask==0.10.1',
         'psycopg2==2.5.2',
@@ -59,6 +60,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
+            'home = home.collect:run',
             'home-collect = home.collect:run',
             'home-syncdb = home.util:syncdb',
             'home-dash = home.dash:run',
