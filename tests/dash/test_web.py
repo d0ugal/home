@@ -26,16 +26,16 @@ class ValuesResourceTestCase(BaseTestCase):
 
         r = self.client.get('/')
 
-        self.assertEqual(r.status_code, 200)
+        self.assertEqual(200, r.status_code)
 
     def test_area(self):
 
         r = self.client.get('/areas/livingroom/')
 
-        self.assertEqual(r.status_code, 200)
+        self.assertEqual(200, r.status_code)
 
     def test_device(self):
 
         r = self.client.get('/device/1/')
 
-        self.assertEqual(r.status_code, 404)
+        self.assertEqual(404, r.status_code)

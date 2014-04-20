@@ -15,7 +15,7 @@ def inject_devices():
 
 
 @web.route('/')
-@web.route('/area/<device_name>/')
+@web.route('/areas/<device_name>/')
 def dashboard(device_name=None):
 
     series_map = {s.id: s for s in Series.query.all()}
