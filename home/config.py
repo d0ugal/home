@@ -52,6 +52,8 @@ LOGGING = {
     },
 }
 
+DEBUG_TB_INTERCEPT_REDIRECTS = False
+
 dictConfig(LOGGING)
 
 
