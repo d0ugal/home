@@ -45,11 +45,12 @@
     </div>
 
 
-    {% for device_name, series_list in device_readings.items() %}
+    <div class="row">
 
-        {% for series in series_list %}
+        {% for device_name, series_list in device_readings.items() %}
 
-            <div class="row">
+            {% for series in series_list %}
+
                 <div class="col-md-6">
                     <div class="box box-primary">
                         <div class="box-header">
@@ -67,11 +68,12 @@
                     </div>
 
                 </div>
-            </div>
+
+            {% endfor %}
 
         {% endfor %}
 
-    {% endfor %}
+    </div>
 
 
 {% endblock %}
