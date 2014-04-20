@@ -1,7 +1,6 @@
 from home import manager
 
 
-@manager.command
 @manager.option('--device', help='Serial device.')
 def collect(device):
     "Start collecting data from the given serial device"
