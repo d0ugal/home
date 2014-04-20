@@ -62,7 +62,7 @@
                             </h3>
                         </div>
                         <div class="box-body">
-                            <div id="graph_{{ device_name|replace(" ", "_") }}_{{ series.name }}" style="height: 300px;"></div>
+                            <div id="graph_{{ device_name|replace(" ", "_") }}_{{ series.name|replace(" ", "_") }}" style="height: 300px;"></div>
                         </div>
                     </div>
 
@@ -84,7 +84,7 @@
 
         {% for device_name, series_list in device_readings.items() %}
         {% for series in series_list %}
-        device_series_graph('{{ series.device_id }}', '{{ series.series_id }}', '#graph_{{ device_name|replace(" ", "_") }}_{{ series.name }}');
+        device_series_graph('{{ series.device_id }}', '{{ series.series_id }}', '#graph_{{ device_name|replace(" ", "_") }}_{{ series.name|replace(" ", "_") }}');
         {% endfor %}
         {% endfor %}
 
