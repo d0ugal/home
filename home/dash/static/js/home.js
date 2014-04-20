@@ -48,16 +48,20 @@ function device_series_graph(device_id, series_id, id){
 
             var interactive_plot = $.plot(id, series, {
                 grid: {
-                    borderColor: "#f3f3f3",
+                    hoverable: true,
+                    borderColor: "#EBEFF7",
                     borderWidth: 1,
-                    tickColor: "#f3f3f3"
+                    tickColor: "#EBEFF7"
                 },
                 series: {
-                    shadowSize: 0, // Drawing is faster without shadows
-                    color: "#3c8dbc"
+                    shadowSize: 0,
+                    lines: {
+                        show: true
+                    }
                 },
                 lines: {
-                    color: "#3c8dbc"
+                    fill: true,
+                    fillColor: { colors: [{ opacity: 0.4 }, { opacity: 0.1}] }
                 },
                 yaxis: {
                     min: min,
@@ -67,7 +71,32 @@ function device_series_graph(device_id, series_id, id){
                 xaxis: {
                     show: true,
                     mode: "time"
+                },
+                colors: ["#3c8dbc", "#f56954"],
+            });
+
+            //Initialize tooltip on hover
+            $("<div class='tooltip-inner' id='line-chart-tooltip'></div>").css({
+                position: "absolute",
+                display: "none",
+                opacity: 0.8
+            }).appendTo("body");
+
+            console.log(id);
+
+            $(id).bind("plothover", function(event, pos, item) {
+
+                if (item) {
+                    var x = item.datapoint[0].toFixed(2),
+                            y = item.datapoint[1].toFixed(2);
+
+                    $("#line-chart-tooltip").html(y)
+                            .css({top: item.pageY + 5, left: item.pageX + 5})
+                            .fadeIn(200);
+                } else {
+                    $("#line-chart-tooltip").hide();
                 }
+
             });
 
         }
