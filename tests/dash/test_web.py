@@ -2,7 +2,7 @@ from datetime import datetime
 
 from tests.base import BaseTestCase
 
-from home.ts.models import Device, Series, DataPoint, DeviceSeries
+from home.ts.models import Area, Device, Series, DataPoint, DeviceSeries
 
 
 class ValuesResourceTestCase(BaseTestCase):
@@ -13,7 +13,8 @@ class ValuesResourceTestCase(BaseTestCase):
         now = datetime.now()
 
         self.series = Series(name="Test series")
-        self.device = Device(82, 1, '0xAAAA', name="Test device")
+        self.area = Area(name="livingroom")
+        self.device = Device(82, 1, '0xAAAA', area=self.area)
         self.device_series = DeviceSeries(self.device, self.series)
         self.value = DataPoint(self.device_series, 10, created_at=now)
 

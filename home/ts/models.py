@@ -134,6 +134,11 @@ class Area(db.Model, SerialiseMixin):
     created_at = Column(DateTime, index=True, nullable=False)
     name = Column(String(20), nullable=True, index=True, unique=True)
 
+    def __init__(self, name):
+        super().__init__()
+        self.created_at = datetime.utcnow()
+        self.name = name
+
     def __repr__(self):
         return "Area(name=%r)" % (self.name)
 
@@ -146,7 +151,7 @@ class Device(db.Model, SerialiseMixin):
     device_type = Column(Integer, index=True)
     device_sub_type = Column(Integer, index=True)
     device_id = Column(String(20), nullable=False, unique=True)
-    area_id = Column(Integer, ForeignKey('area.id'), nullable=False)
+    area_id = Column(Integer, ForeignKey('area.id'))
 
     area = relationship(
         "Area", backref=backref('devices'), lazy='joined', uselist=False)
@@ -160,12 +165,13 @@ class Device(db.Model, SerialiseMixin):
         secondaryjoin="Series.id == DeviceSeries.series_id"
     )
 
-    def __init__(self, device_type, device_sub_type, device_id):
+    def __init__(self, device_type, device_sub_type, device_id, area=None):
         super().__init__()
         self.created_at = datetime.utcnow()
         self.device_type = device_type
         self.device_sub_type = device_sub_type
         self.device_id = device_id
+        self.area = area
 
     @classmethod
     def get_or_create(cls, device_type, device_sub_type, device_id):
