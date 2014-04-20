@@ -31,7 +31,7 @@ setup(
     version=find_version("home", "__init__.py"),
     url='https://github.com/d0ugal/home',
     license='BSD',
-    description="",
+    description="Home automation project by d0ugal.",
     long_description=read('README.rst'),
     author='Dougal Matthews',
     author_email='dougal@dougalmatthews.com',
