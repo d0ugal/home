@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ device_name }}{% endblock %}
+{% block title %}{{ device_name|title }}{% endblock %}
 
 {% block sub_title %}{% endblock %}
 
@@ -23,7 +23,7 @@
                             </h3>
 
                             <p>
-                                {{ series.name }}
+                                {{ series.name|title }}
                             </p>
                             <p>
                                 <time datetime="{{ series.created_at }}">
@@ -54,7 +54,12 @@
                     <div class="box box-primary">
                         <div class="box-header">
                             <i class="fa fa-bar-chart-o"></i>
-                            <h3 class="box-title">{{ series.name }}</h3>
+                            <h3 class="box-title">
+                                {{ series.name|title }}
+                                {% if series.model.graph %}
+                                    ({{ series.model.graph.description }})
+                                {% endif %}
+                            </h3>
                         </div>
                         <div class="box-body">
                             <div id="graph_{{ device_name|replace(" ", "_") }}_{{ series.name }}" style="height: 300px;"></div>

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import (Column, Numeric, Integer, String, ForeignKey, DateTime,
-                        UniqueConstraint)
+                        UniqueConstraint, Text)
 from sqlalchemy.orm import relationship, backref
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -95,6 +95,7 @@ class Graph(db.Model, SerialiseMixin):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(20), nullable=False, index=True, unique=True)
+    description = Column(Text)
     aggregator = Column(String(20), nullable=False)
 
     def __repr__(self):
