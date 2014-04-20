@@ -3,7 +3,7 @@ from collections import OrderedDict
 from sqlalchemy.sql import text
 from flask import render_template, Blueprint
 
-from home.ts.models import db, Device, Series
+from home.ts.models import db, Area, Device, Series
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -11,7 +11,7 @@ web = Blueprint('Dashboard Web', __name__)
 
 @web.context_processor
 def inject_devices():
-    return dict(devices=Device.query.all())
+    return dict(devices=Device.query.join(Area).order_by(Area.name).all())
 
 
 @web.route('/')
