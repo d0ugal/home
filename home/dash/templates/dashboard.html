@@ -30,7 +30,7 @@
                                             </a>
                                         </td>
                                         <td>{{ series.name|title }}</td>
-                                        <td>{{ series.value }}</td>
+                                        <td>{{ series.value|float|round(2) }}</td>
                                         <td>
                                             <span class="sparkline">{{ series.sparkline }}</span>
                                         </td>

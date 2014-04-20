@@ -23,7 +23,7 @@ function device_series_graph(device_id, series_id, id){
         }),
         dataType: 'json',
         type: 'POST',
-        url: '/api/search/',
+        url: '/api/graph/',
         success: function(data){
 
             var plot_data = [];

@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify, abort
 from flask.views import MethodView
 from werkzeug.exceptions import BadRequest
 
+from home.ts import graph
 from home.ts.models import Device, Series, DataPoint, DeviceSeries
 
 api = Blueprint('Dashboard API', __name__)
@@ -57,7 +58,7 @@ class JSONResource(MethodView):
 
 class Resource(JSONResource):
 
-    page_size = 100
+    page_size = 1000
 
     def get(self, resource_id=None, name=None):
 
@@ -96,11 +97,12 @@ class ValuesResource(Resource):
     model = DataPoint
 
 
-class SearchResource(ValuesResource):
+class GraphResource(ValuesResource):
 
     @kwarg_json_query
     def post(self, query=None):
 
+        graph_func = None
         device_series_id = None
 
         if query is None:
@@ -114,6 +116,9 @@ class SearchResource(ValuesResource):
                 device_id=query['device_id'],
                 series_id=query['series_id'],
             ).first()
+
+            if 'graph' not in query:
+                graph_func = graph.get_method(ds.series.graph)
 
             if ds is not None:
                 device_series_id = ds.id
@@ -129,11 +134,17 @@ class SearchResource(ValuesResource):
             end = query['end']
             qs = qs.filter(DataPoint.created_at.between(start, end))
 
-        return self.jsonify_qs(qs.limit(10000))
+        qs = qs.limit(10000)
+
+        if graph_func is not None:
+
+            qs = graph_func(qs)
+
+        return self.jsonify_qs(qs)
 
 
-register_api(DevicesResource, 'devices', '/devices/')
-register_api(SeriesResource, 'series', '/series/')
 register_api(DeviceSeriesResource, 'device_series', '/device_series/')
+register_api(DevicesResource, 'devices', '/devices/')
+register_api(GraphResource, 'graph', '/graph/')
+register_api(SeriesResource, 'series', '/series/')
 register_api(ValuesResource, 'values', '/values/')
-register_api(SearchResource, 'search', '/search/')

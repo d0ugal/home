@@ -21,10 +21,10 @@ class DataPoint(db.Model, SerialiseMixin):
 
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, nullable=False, index=True)
-    value = Column(Numeric, nullable=False)
+    value = Column(Numeric, nullable=False, index=True)
+    device_series_id = Column(Integer, ForeignKey('device_series.id'),
+                              index=True, nullable=False)
 
-    device_series_id = Column(
-        Integer, ForeignKey('device_series.id'), nullable=False)
     device_series = relationship(
         "DeviceSeries", order_by=created_at.desc(),
         backref=backref('data_points'))
@@ -54,7 +54,7 @@ class DeviceSeries(db.Model, SerialiseMixin):
     __tablename__ = 'device_series'
 
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, nullable=False, index=True)
     series_id = Column(Integer, ForeignKey('series.id'), nullable=False)
     device_id = Column(Integer, ForeignKey('device.id'), nullable=False)
 
@@ -89,12 +89,28 @@ class DeviceSeries(db.Model, SerialiseMixin):
             self.device_id, self.series_id)
 
 
+class Graph(db.Model, SerialiseMixin):
+
+    __tablename__ = 'graph'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20), nullable=False, index=True, unique=True)
+    aggregator = Column(String(20), nullable=False)
+
+    def __repr__(self):
+        return "Graph(name=%s)" % (self.name, )
+
+
 class Series(db.Model, SerialiseMixin):
     __tablename__ = 'series'
 
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, nullable=False)
-    name = Column(String(20), nullable=False, unique=True)
+    created_at = Column(DateTime, index=True, nullable=False)
+    name = Column(String(20), nullable=False, index=True, unique=True)
+    graph_id = Column(Integer, ForeignKey('graph.id'))
+
+    graph = relationship(
+        "Graph", backref=backref('series'), lazy='joined', uselist=False)
 
     def __init__(self, name):
         super().__init__()
@@ -114,10 +130,10 @@ class Device(db.Model, SerialiseMixin):
     __tablename__ = 'device'
 
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, nullable=False)
-    name = Column(String(20), nullable=True, unique=True)
-    device_type = Column(Integer)
-    device_sub_type = Column(Integer)
+    created_at = Column(DateTime, index=True, nullable=False)
+    name = Column(String(20), nullable=True, index=True, unique=True)
+    device_type = Column(Integer, index=True)
+    device_sub_type = Column(Integer, index=True)
     device_id = Column(String(20), nullable=False, unique=True)
 
     series = relationship(
