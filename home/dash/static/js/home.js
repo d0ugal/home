@@ -1,23 +1,26 @@
 function device_series_graph(device_id, series_id, id){
 
     fmt = function(date){
-        // Convert the date into YYYY-MM-DD
+        // Convert the date into YYYY-MM-DD HH:MM
         // btw, JavaScript date handling is horrible. It's basically broken.
         var yyyy = date.getFullYear();
         var mm = ('0' + (date.getMonth()+1)).slice(-2);
         var dd = ('0' + (date.getDate())).slice(-2);
-        return yyyy + '-' + mm + '-' + dd;
+        var hh = ('0' + (date.getHours())).slice(-2);
+        var MM = ('0' + (date.getMinutes())).slice(-2);
+        var ss = ('0' + (date.getSeconds())).slice(-2);
+        return yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + MM + ':' + ss;
     }
 
     var today = new Date();
-    var tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
 
     $.ajax({
         contentType: 'application/json',
         data: JSON.stringify({
-            "start": fmt(today),
-            "end": fmt(tomorrow),
+            "start": fmt(yesterday),
+            "end": fmt(today),
             "device_id": device_id,
             "series_id": series_id,
         }),
@@ -82,15 +85,15 @@ function device_series_graph(device_id, series_id, id){
                 opacity: 0.8
             }).appendTo("body");
 
-            console.log(id);
-
             $(id).bind("plothover", function(event, pos, item) {
 
                 if (item) {
                     var x = item.datapoint[0].toFixed(2),
                             y = item.datapoint[1].toFixed(2);
 
-                    $("#line-chart-tooltip").html(y)
+                    var x_str = fmt(new Date(x * 1));
+
+                    $("#line-chart-tooltip").html(x_str + ": <br/> " + y)
                             .css({top: item.pageY + 5, left: item.pageX + 5})
                             .fadeIn(200);
                 } else {
