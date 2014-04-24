@@ -40,5 +40,5 @@ def create_app(config=None):
 
 app = create_app()
 
-manager = Manager(app)
+manager = Manager(app, with_default_commands=False)
 manager.add_command('db', MigrateCommand)
