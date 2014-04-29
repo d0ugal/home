@@ -2,7 +2,7 @@ __version__ = '0.1.0'
 
 from os import environ
 
-from flask import Flask, g
+from flask import Flask
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.login import LoginManager, current_user
