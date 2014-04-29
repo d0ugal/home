@@ -2,7 +2,7 @@ from flask.ext.migrate import MigrateCommand
 from flask.ext.script import Manager, Server, prompt_pass
 
 from home import create_app, db
-from home.collect.loop import collect
+from home.collect.loop import collect as collect_loop
 from home.dash.models import User
 
 app = create_app()
@@ -17,7 +17,7 @@ manager.add_command("dashboard", Server(host='0.0.0.0', use_debugger=False,
 @manager.option('--device', help='Serial device.')
 def collect(device):
     "Start collecting data from the given serial device"
-    collect(device)
+    collect_loop(device)
 
 
 @manager.option('username', help='Username.')
