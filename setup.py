@@ -39,6 +39,7 @@ setup(
     install_requires=[
         'alembic==0.6.4',
         'Flask-Admin==1.0.7',
+        'Flask-Login==0.2.10',
         'Flask-Migrate==1.2.0',
         'Flask-SQLAlchemy==1.0',
         'Flask==0.10.1',

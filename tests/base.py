@@ -2,8 +2,7 @@ from os import environ
 
 from flask.ext.testing import TestCase
 
-from home import create_app
-from home.ts.models import db
+from home import create_app, db
 
 if environ.get('TRAVIS') == 'true':
     _DATABASE_URI = 'postgresql://postgres@localhost:5432/test_home'

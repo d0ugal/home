@@ -1,6 +1,4 @@
-from home import app
 from home.collect.handlers import RecordingHander, LoggingHandler
-from home.collect.loop import collect
 
 
 elec_handler = RecordingHander({
@@ -14,9 +12,3 @@ temp_humidity_handler = RecordingHander({
 })
 
 logging_handler = LoggingHandler()
-
-
-def run(device):
-
-    with app.app_context():
-        collect(device)

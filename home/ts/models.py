@@ -3,11 +3,9 @@ from datetime import datetime
 from sqlalchemy import (Column, Numeric, Integer, String, ForeignKey, DateTime,
                         UniqueConstraint, Text)
 from sqlalchemy.orm import relationship, backref
-from flask.ext.sqlalchemy import SQLAlchemy
 
+from home import db
 from home.util import get_or_create
-
-db = SQLAlchemy()
 
 
 class SerialiseMixin:

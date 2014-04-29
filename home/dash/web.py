@@ -1,9 +1,12 @@
 from collections import OrderedDict
 
+from flask import render_template, Blueprint, request, redirect, url_for, flash
+from flask.ext.login import login_required, login_user, logout_user
 from sqlalchemy.sql import text
-from flask import render_template, Blueprint
 
-from home.ts.models import db, Area, Device, Series
+from home import db
+from home.dash.models import User
+from home.ts.models import Area, Device, Series
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -16,6 +19,7 @@ def inject_devices():
 
 @web.route('/')
 @web.route('/areas/<device_name>/')
+@login_required
 def dashboard(device_name=None):
 
     series_map = {s.id: s for s in Series.query.all()}
@@ -72,3 +76,35 @@ def dashboard(device_name=None):
         device_readings=structured,
         device_name=device_name,
     )
+
+
+@web.route('/login/', methods=['GET', 'POST'])
+def login():
+
+    if request.method == 'GET':
+        return render_template('login.html')
+
+    username = request.form['username']
+    password = request.form['password']
+
+    registered_user = User.query.filter_by(username=username).first()
+
+    if registered_user is None:
+        flash('Username is invalid', 'error')
+        return redirect(url_for('.login'))
+
+    if not registered_user.check_password(password):
+        flash('Password is invalid', 'error')
+        return redirect(url_for('.login'))
+
+    login_user(registered_user, remember=True)
+
+    flash('Logged in successfully')
+
+    return redirect(request.args.get('next') or url_for('.dashboard'))
+
+
+@web.route('/logout/', methods=['GET', ])
+def logout():
+    logout_user()
+    return redirect(url_for('.login'))
