@@ -55,7 +55,7 @@ def create_app(config=None):
 
     # Initialise the migrations app, we want to store all migrations within
     # the project directory for easier packaging.
-    Migrate(app, db, directory='home/migrations')
+    Migrate(app, db, directory=app.config['MIGRATE_DIRECTORY'])
 
     # Wire up the models to flask admin
     from home.ts.models import Graph, Series, Device, DeviceSeries, Area

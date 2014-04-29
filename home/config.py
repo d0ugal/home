@@ -8,6 +8,8 @@ PROJECT_PATH = path.dirname(path.realpath(__file__))
 TEMPLATE_FOLDER = path.join(PROJECT_PATH, 'dash', 'templates')
 STATIC_FOLDER = path.join(PROJECT_PATH, 'dash', 'static')
 
+MIGRATE_DIRECTORY = path.join(PROJECT_PATH, 'migrations')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
