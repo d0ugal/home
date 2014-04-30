@@ -1,4 +1,4 @@
-"""empty message
+"""Remove the user email, we don't need that.
 
 Revision ID: 117cd76539b
 Revises: 490c5b501a3
