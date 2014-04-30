@@ -15,10 +15,10 @@ from datetime import datetime
 from alembic import op
 import sqlalchemy as sa
 
-connection = op.get_bind()
-
 
 def upgrade():
+
+    connection = op.get_bind()
 
     # Create the device_series table as per the default alembic generated code.
     op.create_table(

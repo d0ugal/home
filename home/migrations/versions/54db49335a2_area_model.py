@@ -15,10 +15,11 @@ from datetime import datetime
 from alembic import op
 import sqlalchemy as sa
 
-connection = op.get_bind()
-
 
 def upgrade():
+
+    connection = op.get_bind()
+
     op.create_table(
         'area',
         sa.Column('id', sa.Integer(), nullable=False),
