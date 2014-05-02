@@ -6,6 +6,9 @@ This module is the entry point for the application and is responsible for
 defining the custom sub commands for the ``home`` command line interface.
 
 """
+from logging.config import dictConfig
+from sys import stdout
+
 from flask.ext.migrate import MigrateCommand
 from flask.ext.script import Manager, Server, prompt_pass
 
@@ -24,7 +27,18 @@ manager.add_command("dashboard", Server(host='0.0.0.0', use_debugger=False,
 
 @manager.option('--device', help='Serial device.')
 def collect(device):
-    "Start collecting data from the given serial device"
+    """Start the event loop to collect data from the serial device."""
+
+    # If the device isn't passed in, look for it in the config.
+    if device is None:
+        device = app.config.get('DEVICE')
+
+    # If the device is *still* none, error.
+    if device is None:
+        print("The serial device needs to be passed in as --device or "
+              "set in the config as DEVICE.")
+        return
+
     collect_loop(device)
 
 
@@ -36,8 +50,65 @@ def create_user(username):
     db.session.add(user)
     db.session.commit()
 
+@manager.command
+def config_sample():
+    print(open(app.config['CONFIG_SAMPLE']).read())
+
+@manager.command
+def supervisor_sample():
+    print(open(app.config['SUPERVISOR_SAMPLE']).read())
+
 
 def main():
+
+    DEFAULT_LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'standard': {
+                'format': '%(asctime)s %(levelname)-8s %(name)-35s %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'stream': stdout,
+                'formatter': 'standard'
+            },
+            'file': {
+                'level': 'WARNING',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'standard',
+                'filename': app.config['LOG_WARNING_FILENAME'],
+                'maxBytes': 10 * 1024 * 1024,
+            },
+            'file-full': {
+                'level': 'DEBUG',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'standard',
+                'filename': app.config['LOG_FULL_FILENAME'],
+                'maxBytes': 10 * 1024 * 1024,
+            },
+        },
+        'loggers': {
+            'rfxcom': {
+                'handlers': ['console', 'file', 'file-full'],
+                'propagate': True,
+                'level': 'DEBUG',
+            },
+            'home': {
+                'handlers': ['console', 'file', 'file-full'],
+                'propagate': True,
+                'level': 'DEBUG',
+            }
+        },
+    }
+
+    LOGGING = app.config.get('LOGGING', DEFAULT_LOGGING)
+
+    dictConfig(LOGGING)
+
     manager.run()
 
 if __name__ == '__main__':

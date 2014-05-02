@@ -1,0 +1,19 @@
+# The path to the serial device you want to read from.
+DEVICE = '/dev/serial/by-id/usb-RFXCOM_RFXtrx433_A1WYT9NA-if00-port0'
+
+# Define here how you want different packets to be handled. The dictionary is
+# a key value mapping of packet types to handling functions.
+PACKET_HANDLERS = {
+    'rfxcom.protocol.Status': 'home.collect.logging_handler',
+    'rfxcom.protocol.Elec': 'home.collect.elec_handler',
+    'rfxcom.protocol.TempHumidity': 'home.collect.temp_humidity_handler',
+    '*': 'home.collect.logging_handler',
+}
+
+# The full path for where you want to store the warning log. This will contain
+# only logged messages above the warning level.
+LOG_WARNING_FILENAME = "/var/log/home/warning.log"
+
+# The full path for where you want to store the full log. This will contain
+# all logged messages.
+LOG_FULL_FILENAME = "/var/log/home/full.log"
