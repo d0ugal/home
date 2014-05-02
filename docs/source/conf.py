@@ -19,6 +19,10 @@ import os
 import sys
 
 
+# on_rtd is whether we are on readthedocs.org
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+
 class VersionFinder(ast.NodeVisitor):
     def __init__(self):
         self.version = None
@@ -95,10 +99,11 @@ def gen_ref(ver, title, names):
                     "   :show-inheritance:\n" % vals)
 
 
-gen_ref("", "Home (home)", ["__main__", "config", "exceptions", "util"])
-gen_ref("collect", "Collect (home.collect)", ["handlers", "loop"])
-gen_ref("dash", "Dashboard (home.dash)", ["api", "models", "web"])
-gen_ref("ts", "Time Series (home.ts)", ["graph", "models"])
+if not on_rtd:
+    gen_ref("", "Home (home)", ["__main__", "config", "exceptions", "util"])
+    gen_ref("collect", "Collect (home.collect)", ["handlers", "loop"])
+    gen_ref("dash", "Dashboard (home.dash)", ["api", "models", "web"])
+    gen_ref("ts", "Time Series (home.ts)", ["graph", "models"])
 
 
 # -- General configuration ------------------------------------------------
@@ -340,8 +345,6 @@ texinfo_documents = [(
 
 # -- RTD Theme ------------------------------------------------------------
 
-# on_rtd is whether we are on readthedocs.org
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
