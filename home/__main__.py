@@ -50,9 +50,11 @@ def create_user(username):
     db.session.add(user)
     db.session.commit()
 
+
 @manager.command
 def config_sample():
     print(open(app.config['CONFIG_SAMPLE']).read())
+
 
 @manager.command
 def supervisor_sample():
