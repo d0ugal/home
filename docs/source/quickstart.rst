@@ -46,7 +46,7 @@ A quick sumamry of what it roughly does, to see in more detail, use the source:
    fine.
 
 
-.. _bootstrap script: https://raw.githubusercontent.com/d0ugal/home/master/bootstrap.sh
+.. _bootstrap script: https://raw.githubusercontent.com/d0ugal/home/master/home/conf/bootstrap.sh
 
 
 Installing Home
