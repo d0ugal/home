@@ -1,12 +1,26 @@
-Welcome to home's documentation!
+Welcome to Home's documentation!
 ================================
 
-Home is a Python library for managing your home automation setup. At the moment
-home is in its early stages and has a very limited set of functionality.
+Home is a Python library for home automation. It aims to be a dashboard and
+control panel for your house. At the moment Home is a fairly new project and
+the range of supported devices and features is limited.
+
+
 
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    quickstart
+
+
+API Reference Documentation:
+
+.. toctree::
+   :maxdepth: 2
+
+   ref/index
+   ref/collect/index
+   ref/dash/index
+   ref/ts/index

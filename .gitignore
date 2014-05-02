@@ -1,10 +1,11 @@
-.tox
+*.egg-info
+*.log
 *.pyc
 .coverage
-*.egg-info
-data.db
+.tox
 .vagrant
+data.db
 dist
 docs/build/*
+docs/source/ref/
 dump.sql
-*.log

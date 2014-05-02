@@ -1,3 +1,12 @@
+"""
+home.ts.graph
+=============
+
+A set of graph aggregation functions that are used to process the results so
+we can display them in different ways. For example, rather than showing an
+increasing total watts we can show how much was used in the hour.
+"""
+
 from datetime import timedelta
 from functools import partial
 from itertools import groupby

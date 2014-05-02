@@ -1,3 +1,10 @@
+"""
+home.collect.loop
+=================
+
+The basic event loop used by Home for running the python-rfxcom integration.
+"""
+
 from asyncio import get_event_loop
 
 from rfxcom.transport import AsyncioTransport

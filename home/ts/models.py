@@ -1,8 +1,16 @@
+"""
+home.ts.models
+==============
+
+A set of models for storing data points for a time series and device. These
+can then also be attributed to an Area, which typically defines a room in the
+house.
+"""
+
 from datetime import datetime
 
 from sqlalchemy import (Column, Numeric, Integer, String, ForeignKey, DateTime,
                         UniqueConstraint, Text)
-from sqlalchemy.orm import relationship, backref
 
 from home import db
 from home.util import get_or_create
@@ -23,9 +31,9 @@ class DataPoint(db.Model, SerialiseMixin):
     device_series_id = Column(Integer, ForeignKey('device_series.id'),
                               index=True, nullable=False)
 
-    device_series = relationship(
+    device_series = db.relationship(
         "DeviceSeries", order_by=created_at.desc(),
-        backref=backref('data_points'))
+        backref=db.backref('data_points'))
 
     def __init__(self, device_series, value, created_at=None):
         self.created_at = datetime.utcnow()
@@ -56,10 +64,10 @@ class DeviceSeries(db.Model, SerialiseMixin):
     series_id = Column(Integer, ForeignKey('series.id'), nullable=False)
     device_id = Column(Integer, ForeignKey('device.id'), nullable=False)
 
-    device = relationship(
-        "Device", backref=backref('device_series'), lazy='joined')
-    series = relationship(
-        "Series", backref=backref('device_series'), lazy='joined')
+    device = db.relationship(
+        "Device", backref=db.backref('device_series'), lazy='joined')
+    series = db.relationship(
+        "Series", backref=db.backref('device_series'), lazy='joined')
 
     __table_args__ = (
         UniqueConstraint('series_id', 'device_id', name='_series_device_uc'),
@@ -108,8 +116,8 @@ class Series(db.Model, SerialiseMixin):
     name = Column(String(20), nullable=False, index=True, unique=True)
     graph_id = Column(Integer, ForeignKey('graph.id'))
 
-    graph = relationship(
-        "Graph", backref=backref('series'), lazy='joined', uselist=False)
+    graph = db.relationship(
+        "Graph", backref=db.backref('series'), lazy='joined', uselist=False)
 
     def __init__(self, name):
         super().__init__()
@@ -151,10 +159,10 @@ class Device(db.Model, SerialiseMixin):
     device_id = Column(String(20), nullable=False, unique=True)
     area_id = Column(Integer, ForeignKey('area.id'))
 
-    area = relationship(
-        "Area", backref=backref('devices'), lazy='joined', uselist=False)
+    area = db.relationship(
+        "Area", backref=db.backref('devices'), lazy='joined', uselist=False)
 
-    series = relationship(
+    series = db.relationship(
         "Series",
         secondary=("join(DeviceSeries, Series, DeviceSeries.series_id == "
                    "Series.id)"),

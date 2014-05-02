@@ -1,7 +1,7 @@
 coverage
 flake8
+flask-debugtoolbar
 Flask-Testing
 nose
 sphinx
 sphinx_rtd_theme
-flask-debugtoolbar

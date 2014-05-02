@@ -1,3 +1,12 @@
+"""
+home.collect.handlers
+=====================
+
+Handlers are defined to handle events that Home collects. They will either
+just record the event, or store it in a particular way or take action based on
+the event.
+"""
+
 from logging import getLogger
 
 from home import db
@@ -26,12 +35,13 @@ def load_handlers(handler_mapping):
     If an non-string object is given for either packet or handler (key or
     value) assume these are the objects to use and yield them.
 
-    {
+    ::
+        {
         'rfxcom.protocol.Status': 'home.collect.logging_handler',
         'rfxcom.protocol.Elec': 'home.collect.elec_handler',
         'rfxcom.protocol.TempHumidity': 'home.collect.temp_humidity_handler',
         '*': 'home.collect.logging_handler'
-    }
+        }
     """
 
     handlers = {}

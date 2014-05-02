@@ -1,3 +1,10 @@
+"""
+home.dash.models
+================
+
+The models for the web interface, this defines a User to enable authentication.
+"""
+
 from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash

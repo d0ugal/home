@@ -1,3 +1,11 @@
+"""
+home.__main__
+=============
+
+This module is the entry point for the application and is responsible for
+defining the custom sub commands for the ``home`` command line interface.
+
+"""
 from flask.ext.migrate import MigrateCommand
 from flask.ext.script import Manager, Server, prompt_pass
 

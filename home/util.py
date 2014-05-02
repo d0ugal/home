@@ -1,3 +1,11 @@
+"""
+home.util
+=========
+
+The random file all projects have where they dump stuff they don't know where
+else to place.
+"""
+
 
 def get_or_create(model, **kwargs):
 

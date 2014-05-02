@@ -1,3 +1,10 @@
+"""
+home.dash.api
+=============
+
+The web API that is primarilly used by the front end for rending graphs.
+"""
+
 from functools import wraps
 
 from flask import Blueprint, request, jsonify, abort

@@ -1,8 +1,15 @@
+"""
+home.dash.web
+=============
+
+The web controllers for rendering login, logout and dashboard screens.
+"""
+
 from collections import OrderedDict
 
 from flask import render_template, Blueprint, request, redirect, url_for, flash
 from flask.ext.login import login_required, login_user, logout_user
-from sqlalchemy.sql import text
+from sqlalchemy import sql
 
 from home import db
 from home.dash.models import User
@@ -47,7 +54,7 @@ def dashboard(device_name=None):
 
     query += "\n    ORDER BY series_name, device_name"
 
-    device_series = db.engine.execute(text(query), **kwargs)
+    device_series = db.engine.execute(sql.text(query), **kwargs)
 
     structured = OrderedDict()
 

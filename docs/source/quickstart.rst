@@ -1,40 +1,42 @@
 Quickstart for Installing home
 ==============================
 
-The current version of home makes a number of assumptions, these steps should
-work fine if you use exactly the same setup but will probably still work on
-other unix based operating systems with relatively small changes.
+Home currently makes a large number of assumptions. These steps should work
+fine if you are using exactly the same setup. If you don't, you are encouraged
+to `raise an issue`_ on GitHub where we would be happy to try and help! The
+changes to work on other Unix systems will be relatively minor if you are
+using the same or similar devices.
+
+.. _raise an issue: https://github.com/d0ugal/home/issues
+
 
 Assumptions!
 ------------
 
-- You are running `Raspbian`_ [#]_ on a Raspberry Pi.
+- You are running `Raspbian`_ [#]_ on a Raspberry Pi [#]_.
 - You have an `RFXCOM RFXtrx 433`_.
-- You have a device supported by the Python library `rfxcom`_ and home. This
-  means you are running and OWL CM160 electricity sensor and/or a Oregon
-  Scientific THGN132N Thermo/Hydro Sensor
-
+- You have a device supported by the Python library `rfxcom`_ (see a list of
+  supported devices in the README, devices are being added over time.)
 
 .. _Raspbian: http://www.raspbian.org/
 .. _RFXCOM RFXtrx 433: http://www.rfxcom.com/store/Transceivers/12103
-.. _rfxcom: https://github.com/d0ugal/rfxcom
+.. _rfxcom: https://github.com/d0ugal/python-rfxcom
 
 .. [#] I am running this version: http://downloads.raspberrypi.org/raspbian_latest
+.. [#] I'm using a model B board, the SD card doesn't need to be that big.
 
 
 Setting up the Raspberry Pi
 ---------------------------
 
-Assuming you have a fresh Raspbian setup that matches the one referenced above
-then you should be able to use the `bootstrap script`_ in the home git
-repository to perform all the setup required. Since you shouldn't trust me, I
-suggest you copy the commands a block at a time rather than download it all
-and run it.
+So, you have a fresh Rasbian setup on your Raspberry Pi? Great. You should be
+able to use the `bootstrap script`_ in the Home git repository.
 
-A quick sumamry of what it does:
+A quick sumamry of what it roughly does, to see in more detail, use the source:
 
 1. apt-get update and upgrade.
-2. Install git, postgres, python-dev, pip, screen and vim packages with apt.
+2. Install git, postgres, python-dev, pip, screen, supervisor and vim packages
+   with apt.
 3. Upgrade pip with pip :)
 4. Install virtualenv, virtualenvwrapper and tox with pip
 5. Download, compile and install Python 3.4 under /opt/python3.4
@@ -47,70 +49,66 @@ A quick sumamry of what it does:
 .. _bootstrap script: https://raw.githubusercontent.com/d0ugal/home/master/bootstrap.sh
 
 
-Installing home
+Installing Home
 ---------------
 
-Ok, first lets make a Python 3.4 virtualenv to run things from. So, after you
-SSH into the Pi, follow these commands::
+Now we are setup, we need to create an environment for Home. First we want to
+make a Python 3.4 virtualenv. On the pi, run these commands::
 
     mkvirtualenv home -p /opt/python3.4/bin/python3.4
     pip install home
 
-Done!
+Now you have the code installed, we need to finish setting up the database.
+You can do this like so::
 
-Now you should have some new commands under the name home-*, the first one we
-will do will setup the database::
+    home db upgrade
+    home create_user admin
 
-    home-syncdb
-
-If there is no output, it worked. `Ghetto right?`
-
-Now we need to find the rfxtrx, you have it connected to the Pi's USB right?
-You'll find the path for it under ``/dev/serial/by-id/`` with my setup it shows
-as exactly ``/dev/serial/by-id/usb-RFXCOM_RFXtrx433_A1WYT9NA-if00-port0``
-
-Ok, now we know everything we need.
+You can use any username you want and you will be prompted for a password.
 
 
-Running home
+Running Home
 ------------
 
-- SSH to your pi
-- Start a screen session with the command ``screen``
-- Activate the virtualenv with ``workon home``
-- Run the command ``home-collection --device /dev/serial/by-id/...`` where the
-  path is the full path to your serial device.
+The best way to do this is via supervisord. To do that, you need to create a
+config file called ``/etc/supervisor/conf.d/home.conf`` with the following
+contents::
 
-Assuming this has worked, you will start to see some logged output with home
-outputting the packets its receiving and it'll output the value its storing.
+    [program:home-dashboard]
+    command = /home/pi/.virtualenvs/home/bin/home dashboard
+    user = pi
+    autostart = true
+    autorestart = true
+    stdout_logfile = /var/log/supervisor/home-dashboard.log
+    stderr_logfile = /var/log/supervisor/home-dashboard-error.log
+
+    [program:home-collect]
+    command = /home/pi/.virtualenvs/home/bin/home collect --device /dev/serial/by-id/...
+    user = pi
+    autostart = true
+    autorestart = true
+    stdout_logfile = /var/log/supervisor/home-collect.log
+    stderr_logfile = /var/log/supervisor/home-collect-error.log
 
 
-Viewing the datas
------------------
+You will need to replace the path to your serial device to match what is on
+your system.
 
-There isn't much support for this yet, but you can run the following command to
-get some really basic stuff::
+After that, run::
 
-    home-report
+  sudo service supervisor restart
+  ps aux | grep home
 
-Otherwise, connect to postgres with ``psql -U home`` and the password `home`
-when it asks for it, then you can explore and find more interesting things.
+You should see some output showing two processes running.
 
-Find out when we last got data from each device::
+.. note::
 
-    SELECT device.id, device.name, max(data_point.created_at)
-    FROM data_point
-    JOIN device ON (data_point.device_id = device.id)
-    GROUP BY device.id
-    ORDER by max;
+    If that doesn't appear to work, try restarting supervisor like this::
 
-See how many data points, the max and the min for each device on each recorded
-data series::
+        sudo service supervisor stop && sudo service supervisor start
 
-    SELECT series.name AS series, device.name AS device, count(device.id),
-        max(value), min(value), max(data_point.created_at) as latest
-    FROM data_point
-    JOIN device ON (data_point.device_id = device.id)
-    JOIN series ON (data_point.series_id = series.id)
-    GROUP BY device.id, series.id
-    ORDER BY series.name, max DESC;
+    For some reason the restart function wasn't working for me.
+
+If that worked, you should be able to head the IP of your address on port 5000
+in your browser (``http://IP:5000/``). You will be asked to login and then you
+will see a dashboard.
