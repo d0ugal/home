@@ -88,7 +88,7 @@ class LoggingHandler(BaseHandler):
             "Ignoring packet: {0}".format(self.format_packet(packet.raw)))
 
 
-class RecordingHander(BaseHandler):
+class RecordingHandler(BaseHandler):
 
     def __init__(self, mapping):
         super().__init__()

@@ -8,7 +8,7 @@ from rfxcom.protocol import Status
 
 from home.collect import logging_handler
 from home.collect.handlers import (BaseHandler, LoggingHandler,
-                                   RecordingHander, load_handlers)
+                                   RecordingHandler, load_handlers)
 from home.exceptions import HandlerConfigError
 
 
@@ -120,7 +120,7 @@ class LoggingHandlerTestCase(BaseTestCase):
             ])
 
 
-class RecordingHanderTestCase(BaseTestCase):
+class RecordingHandlerTestCase(BaseTestCase):
 
     def setUp(self):
 
@@ -129,15 +129,15 @@ class RecordingHanderTestCase(BaseTestCase):
             'current_watts': 650,
             'total_watts': 100000
         })
-        self.handler = RecordingHander({
+        self.handler = RecordingHandler({
             'electricity': 'current_watts',
         })
-        self.log_name = 'home.collect.RecordingHander'
+        self.log_name = 'home.collect.RecordingHandler'
 
     def test_logger(self):
 
         n = self.handler.log.name
-        self.assertEqual(n, 'home.collect.RecordingHander')
+        self.assertEqual(n, 'home.collect.RecordingHandler')
 
     @patch('home.ts.models.DataPoint.record')
     def test_record(self, mock_record):
@@ -150,14 +150,14 @@ class RecordingHanderTestCase(BaseTestCase):
     @patch('home.ts.models.DataPoint.record')
     def test_record_missing(self, mock_record):
 
-        self.handler = RecordingHander({
+        self.handler = RecordingHandler({
             'electricity': 'not_a_correct_attribute',
         })
 
         with self.assertLogs(self.log_name, level='ERROR') as cm:
             self.handler(self.packet)
             self.assertEqual(cm.output, [
-                "ERROR:home.collect.RecordingHander:Failed to find "
+                "ERROR:home.collect.RecordingHandler:Failed to find "
                 "not_a_correct_attribute in packet. Key list: ['current_watts'"
                 ", 'id', 'packet_type', 'sub_type', 'total_watts']"
             ])
