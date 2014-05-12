@@ -5,7 +5,7 @@ home.__init__
 A simple module that defines how the flask app is created.
 
 """
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 from os import environ
 
