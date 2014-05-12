@@ -4,6 +4,7 @@
 .coverage
 .tox
 .vagrant
+cover
 dist
 docs/build/*
 dump.sql
