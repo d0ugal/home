@@ -7,7 +7,7 @@ sudo apt-get -y install \
     python-dev \
     python-pip \
     screen \
-    supervisord \
+    supervisor \
     vim \
     ;
 
