@@ -44,7 +44,7 @@ setup(
         'Flask-SQLAlchemy==1.0',
         'Flask==0.10.1',
         'psycopg2==2.5.2',
-        'rfxcom==0.0.1',
+        'rfxcom==0.1.0',
         'simplejson==3.3.3',
         'SQLAlchemy==0.9.3',
     ],
