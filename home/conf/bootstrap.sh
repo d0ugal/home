@@ -56,3 +56,7 @@ if ! grep -q virtualenvwrapper ~/.bashrc; then
 fi
 
 
+if [ ! -d /var/log/home ]; then
+    sudo mkdir /var/log/home;
+    sudo chown pi /var/log/home;
+fi
