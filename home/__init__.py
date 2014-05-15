@@ -11,19 +11,13 @@ from os import environ
 
 from flask import Flask
 from flask.ext.admin import Admin
-from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext.login import LoginManager, current_user
+from flask.ext.login import LoginManager
 from flask.ext.migrate import Migrate
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-
-
-class AuthedModelView(ModelView):
-    def is_accessible(self):
-        return current_user.is_authenticated()
 
 
 def create_app(config=None):
@@ -56,6 +50,8 @@ def create_app(config=None):
     login_manager.init_app(app)
     login_manager.login_view = 'Dashboard Web.login'
 
+    from home.dash.models import User
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
@@ -64,18 +60,10 @@ def create_app(config=None):
     # the project directory for easier packaging.
     Migrate(app, db, directory=app.config['MIGRATE_DIRECTORY'])
 
-    # Wire up the models to flask admin
-    from home.ts.models import Graph, Series, Device, DeviceSeries, Area
-    from home.dash.models import User
-
     admin = Admin(app)
-    admin.add_view(AuthedModelView(Area, db.session))
-    admin.add_view(AuthedModelView(Device, db.session))
-    admin.add_view(AuthedModelView(Series, db.session))
-    admin.add_view(AuthedModelView(DeviceSeries, db.session))
-    admin.add_view(AuthedModelView(Graph, db.session))
 
-    admin.add_view(AuthedModelView(User, db.session))
+    from home.dash.admin import setup_admin
+    setup_admin(admin)
 
     # Wire up the database to the app so it gets the config.
     db.init_app(app)

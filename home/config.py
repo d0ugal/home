@@ -13,6 +13,7 @@ SQLALCHEMY_DATABASE_URI = 'postgresql://home:home@localhost:5432/home'
 
 #: Location of the dashboard templates.
 TEMPLATE_FOLDER = path.join(PROJECT_PATH, 'dash', 'templates')
+
 #: Location of the dashboard static assets.
 STATIC_FOLDER = path.join(PROJECT_PATH, 'dash', 'static')
 
@@ -27,7 +28,6 @@ LOG_FULL_FILENAME = path.join(PROJECT_PATH, "home.log")
 
 #: The default packet handlers, the devices that will be recorded by default.
 PACKET_HANDLERS = {
-    'rfxcom.protocol.Status': 'home.collect.logging_handler',
     'rfxcom.protocol.Elec': 'home.collect.elec_handler',
     'rfxcom.protocol.TempHumidity': 'home.collect.temp_humidity_handler',
     '*': 'home.collect.logging_handler',
