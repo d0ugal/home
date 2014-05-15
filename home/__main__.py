@@ -8,12 +8,13 @@ defining the custom sub commands for the ``home`` command line interface.
 """
 from logging.config import dictConfig
 from sys import stdout
+from warnings import warn
 
 from flask.ext.migrate import MigrateCommand
 from flask.ext.script import Manager, Server, prompt_pass
 
 from home import create_app, db
-from home.collect.loop import collect as collect_loop
+from home.collect.loop import collect as rfxcom_collect
 from home.dash.models import User
 
 app = create_app()
@@ -26,7 +27,7 @@ manager.add_command("dashboard", Server(host='0.0.0.0', use_debugger=False,
 
 
 @manager.option('--device', help='Serial device.')
-def collect(device):
+def rfxcom(device):
     """Start the event loop to collect data from the serial device."""
 
     # If the device isn't passed in, look for it in the config.
@@ -39,7 +40,14 @@ def collect(device):
               "set in the config as DEVICE.")
         return
 
-    collect_loop(device)
+    rfxcom_collect(device)
+
+
+@manager.option('--device', help='Serial device.')
+def collect(device):
+    warn("The collect command is deprecated. Use the rfxcom command instead.",
+         DeprecationWarning)
+    rfxcom(device)
 
 
 @manager.option('username', help='Username.')
