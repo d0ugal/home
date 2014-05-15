@@ -162,15 +162,6 @@ class Device(db.Model, SerialiseMixin):
     area = db.relationship(
         "Area", backref=db.backref('devices'), lazy='joined', uselist=False)
 
-    series = db.relationship(
-        "Series",
-        secondary=("join(DeviceSeries, Series, DeviceSeries.series_id == "
-                   "Series.id)"),
-        primaryjoin=("and_(Device.id == DeviceSeries.device_id, Series.id == "
-                     "DeviceSeries.series_id)"),
-        secondaryjoin="Series.id == DeviceSeries.series_id"
-    )
-
     def __init__(self, device_type, device_sub_type, device_id, area=None):
         super().__init__()
         self.created_at = datetime.utcnow()
