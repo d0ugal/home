@@ -37,3 +37,4 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 CONFIG_SAMPLE = path.join(PROJECT_PATH, 'conf', 'config.py.sample')
 SUPERVISOR_SAMPLE = path.join(PROJECT_PATH, 'conf', 'supervisord.conf')
+NGINX_SAMPLE = path.join(PROJECT_PATH, 'conf', 'nginx.conf')

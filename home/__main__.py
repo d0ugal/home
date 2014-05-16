@@ -69,6 +69,11 @@ def supervisor_sample():
     print(open(app.config['SUPERVISOR_SAMPLE']).read())
 
 
+@manager.command
+def nginx_sample():
+    print(open(app.config['NGINX_SAMPLE']).read())
+
+
 def main():
 
     DEFAULT_LOGGING = {
