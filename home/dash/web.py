@@ -14,6 +14,7 @@ from sqlalchemy import sql
 from home import db
 from home.dash.models import User
 from home.ts.models import Area, Device, Series
+from home.webcam.models import Webcam
 
 
 web = Blueprint('Dashboard Web', __name__)
@@ -22,6 +23,11 @@ web = Blueprint('Dashboard Web', __name__)
 @web.context_processor
 def inject_devices():
     return dict(devices=Device.query.join(Area).order_by(Area.name).all())
+
+
+@web.context_processor
+def inject_webcams():
+    return dict(webcams=Webcam.query.all())
 
 
 @web.route('/')

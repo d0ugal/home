@@ -11,9 +11,10 @@ from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.tools import get_query_for_ids
 from flask.ext.login import current_user
 
-from home.ts.models import Graph, Series, Device, DeviceSeries, Area
 from home import db
 from home.dash.models import User
+from home.ts.models import Graph, Series, Device, DeviceSeries, Area
+from home.webcam.models import Webcam
 
 
 class AuthedModelView(ModelView):
@@ -74,3 +75,5 @@ def setup_admin(admin):
     admin.add_view(AuthedModelView(Graph, db.session))
 
     admin.add_view(AuthedModelView(User, db.session))
+
+    admin.add_view(AuthedModelView(Webcam, db.session))

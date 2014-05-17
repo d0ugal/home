@@ -55,6 +55,8 @@ if ! grep -q virtualenvwrapper ~/.bashrc; then
     source /usr/local/bin/virtualenvwrapper_lazy.sh' >> ~/.bashrc
 fi
 
+id -u pi &>/dev/null || useradd pi;
+
 
 if [ ! -d /var/log/home ]; then
     sudo mkdir /var/log/home;
