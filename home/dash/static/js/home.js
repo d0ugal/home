@@ -106,3 +106,24 @@ function device_series_graph(device_id, series_id, id){
     });
 
 };
+
+$(function(){
+
+    $(".webcam-image").each(function(i, val){
+
+        var original = val.src;
+
+        console.log(original);
+
+        var reloader = function(){
+            var new_src = original + "?z=" + new Date().getTime();
+            console.log(new_src);
+            val.src = new_src;
+            setTimeout(reloader, 1000);
+        }
+
+        reloader()
+
+    });
+
+});

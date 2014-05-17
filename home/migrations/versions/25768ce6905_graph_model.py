@@ -23,15 +23,9 @@ def upgrade():
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('name')
     )
-    op.drop_index('data_point_created_at_idx', table_name='data_point')
-    op.drop_index('data_point_value_idx', table_name='data_point')
     op.add_column('series', sa.Column('graph_id', sa.Integer(), nullable=True))
 
 
 def downgrade():
     op.drop_column('series', 'graph_id')
-    op.create_index('data_point_value_idx', 'data_point', ['value'],
-                    unique=False)
-    op.create_index('data_point_created_at_idx', 'data_point', ['created_at'],
-                    unique=False)
     op.drop_table('graph')

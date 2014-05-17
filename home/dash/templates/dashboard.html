@@ -6,6 +6,23 @@
 
 {% block content %}
 
+    {% if webcams %}
+        <div class="row">
+            <section class="col-lg-6">
+
+                <div class="box box-primary no-padding">
+                    <div class="box-body">
+
+                        {% for webcam in webcams %}
+                            <img class="webcam-image" src="{{ webcam.full_path }}" alt="{{ webcam.name }}"/>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    {% endif %}
+
     <section class="col-lg-6 connectedSortable">
 
         <div class="box box-primary">

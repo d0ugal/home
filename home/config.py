@@ -17,6 +17,9 @@ TEMPLATE_FOLDER = path.join(PROJECT_PATH, 'dash', 'templates')
 #: Location of the dashboard static assets.
 STATIC_FOLDER = path.join(PROJECT_PATH, 'dash', 'static')
 
+#: Location of the uploaded/dynamic files.
+MEDIA_FOLDER = path.join(STATIC_FOLDER, 'media')
+
 #: Location of the Alembic database migrations.
 MIGRATE_DIRECTORY = path.join(PROJECT_PATH, 'migrations')
 
