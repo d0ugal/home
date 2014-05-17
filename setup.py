@@ -46,7 +46,7 @@ setup(
         'psycopg2>=2.5.2',
         'rfxcom>=0.1.0',
         'simplejson>=3.3.3',
-        'SQLAlchemy>=0.9.3',
+        'SQLAlchemy>=0.9.4',
     ],
     include_package_data=True,
     platforms='any',
