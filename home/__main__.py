@@ -6,6 +6,7 @@ This module is the entry point for the application and is responsible for
 defining the custom sub commands for the ``home`` command line interface.
 
 """
+from datetime import datetime, timedelta
 from logging.config import dictConfig
 from sys import stdout
 from warnings import warn
@@ -78,6 +79,37 @@ def supervisor_sample():
 @manager.command
 def nginx_sample():
     print(open(app.config['NGINX_SAMPLE']).read())
+
+
+@manager.command
+def populate_redis():
+
+    from home.ts.models import DataPoint
+    from home import redis_series
+
+    redis_series._redis.flushall()
+
+    now = datetime.utcnow()
+
+    limit = now - timedelta(days=7)
+
+    start = limit
+    end = limit + timedelta(hours=1)
+
+    while end < now:
+
+        print(start, limit)
+
+        data_points = DataPoint.query.filter(
+            DataPoint.created_at >= start,
+            DataPoint.created_at <= end,
+        ).order_by(DataPoint.created_at.desc())
+
+        for data_point in data_points:
+            data_point.push_to_redis()
+
+        start = start + timedelta(hours=1)
+        end = end + timedelta(hours=1)
 
 
 def main():

@@ -14,6 +14,7 @@ from sqlalchemy import (Column, Numeric, Integer, String, ForeignKey, DateTime,
 
 from home import db
 from home.util import get_or_create
+from home import redis_series
 
 
 class SerialiseMixin:
@@ -42,12 +43,19 @@ class DataPoint(db.Model, SerialiseMixin):
         self.value = value
         self.created_at = created_at
 
+    def push_to_redis(self):
+
+        ds = self.device_series
+        key = "D-%s:S-%s" % (ds.device_id, ds.series_id)
+        redis_series.push(key, self.value, self.created_at)
+
     @classmethod
     def record(cls, series, device, value, created_at=None):
         ds = DeviceSeries.get_or_create(device=device, series=series)
         data_point = DataPoint(device_series=ds, value=value)
         if created_at is None:
             data_point.created_at = datetime.utcnow()
+        data_point.push_to_redis()
         db.session.add(data_point)
         return data_point
 

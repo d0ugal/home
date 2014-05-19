@@ -39,3 +39,9 @@ class ValuesResourceTestCase(BaseTestCase):
         r = self.client.get('/device/1/')
 
         self.assertEqual(404, r.status_code)
+
+    def test_admin(self):
+
+        r = self.client.get('/admin/')
+
+        self.assertEqual(200, r.status_code)

@@ -36,3 +36,13 @@ class BaseTestCase(TestCase):
 
         self.db.session.remove()
         self.db.drop_all()
+
+
+class BaseRedisTestCase(BaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        from home import redis_series
+
+        redis_series._redis.flushall()

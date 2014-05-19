@@ -7,6 +7,7 @@ sudo apt-get -y install \
     nginx \
     python-dev \
     python-pip \
+    redis-server \
     screen \
     supervisor \
     vim \

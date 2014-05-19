@@ -15,8 +15,11 @@ from flask.ext.login import LoginManager
 from flask.ext.migrate import Migrate
 from flask.ext.sqlalchemy import SQLAlchemy
 
+from home.ts.redis import RedisSeries
+
 
 db = SQLAlchemy()
+redis_series = RedisSeries()
 login_manager = LoginManager()
 
 

@@ -34,15 +34,31 @@ function device_series_graph(device_id, series_id, id){
 
             $.each(data.data, function(x, result){
 
-                var plot_data = [];
+                $.each(result, function(graph_name, points){
 
-                $.each(result.values, function(i, v){
-                    if (i == 0 || v.value > max) max = v.value;
-                    if (i == 0 || v.value < min) min = v.value;
-                    plot_data.push([new Date(v.created_at), v.value])
+                    console.log(graph_name, points.length, min, max);
+
+                    var plot_data = [];
+
+                    $.each(points, function(i, point){
+
+                        var date = point[0];
+                        var value = point[1];
+                        console.log(value);
+
+                        if (plot_data.length == 0 || value > max) max = value;
+                        if (plot_data.length == 0 || value < min) min = value;
+
+                        plot_data.push([new Date(date), value]);
+
+                    })
+
+                    console.log(graph_name, points.length, min, max);
+
+                    series.push(plot_data);
+
                 });
 
-                series.push(plot_data);
 
             });
 
