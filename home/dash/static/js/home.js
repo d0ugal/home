@@ -113,8 +113,6 @@ $(function(){
 
         var original = val.src;
 
-        console.log(original);
-
         var reloader = function(){
             var new_src = original + "?z=" + new Date().getTime();
             console.log(new_src);
