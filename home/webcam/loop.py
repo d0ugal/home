@@ -32,7 +32,7 @@ def fetch_urls():
             with open(filename,  'wb') as f:
                 f.write(body)
 
-        yield from sleep(1)
+        yield from sleep(10)
 
 
 def collect(dev_name=None, callbacks=None):

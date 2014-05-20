@@ -128,7 +128,7 @@ $(function(){
             var new_src = original + "?z=" + new Date().getTime();
             console.log(new_src);
             val.src = new_src;
-            setTimeout(reloader, 1000);
+            setTimeout(reloader, 10000);
         }
 
         reloader()
