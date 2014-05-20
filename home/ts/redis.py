@@ -24,6 +24,8 @@ RESOLUTIONS = {
     # 'monthly': ("%Y-%m", relativedelta(months=1)),
 }
 
+EXPIRE_AFTER = 60 * 60 * 24 * 7  # 7 days in seconds
+
 
 class RedisSeries:
 
@@ -52,6 +54,7 @@ class RedisSeries:
 
             key = self.event_key(series, dt, dt_fmt)
             pipeline.hset(key, timestamp, value)
+            pipeline.expire(key, EXPIRE_AFTER)
 
         pipeline.execute()
 
