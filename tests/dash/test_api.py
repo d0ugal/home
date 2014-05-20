@@ -1,7 +1,7 @@
 from home.ts.models import Area, Device, Series, DeviceSeries
 from json import dumps
 
-from tests.base import BaseTestCase, BaseRedisTestCase
+from tests.base import BaseTestCase
 
 
 class DevicesResourceTestCase(BaseTestCase):
@@ -65,7 +65,7 @@ class SeriesResourceTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
 
-class GraphResourceTestCase(BaseRedisTestCase):
+class GraphResourceTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()

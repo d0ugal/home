@@ -2,7 +2,7 @@ from os import environ
 
 from flask.ext.testing import TestCase
 
-from home import create_app, db
+from home import create_app, db, redis_series
 
 if environ.get('TRAVIS') == 'true':
     _DATABASE_URI = 'postgresql://postgres@localhost:5432/test_home'
@@ -18,8 +18,9 @@ class BaseTestCase(TestCase):
     def create_app(self):
 
         app = create_app(self)
-
         self.assertEqual(app.config['SQLALCHEMY_DATABASE_URI'], _DATABASE_URI)
+
+        redis_series._redis.flushall()
 
         return app
 
@@ -36,13 +37,3 @@ class BaseTestCase(TestCase):
 
         self.db.session.remove()
         self.db.drop_all()
-
-
-class BaseRedisTestCase(BaseTestCase):
-
-    def setUp(self):
-        super().setUp()
-
-        from home import redis_series
-
-        redis_series._redis.flushall()
