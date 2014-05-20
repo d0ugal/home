@@ -36,15 +36,12 @@ function device_series_graph(device_id, series_id, id){
 
                 $.each(result, function(graph_name, points){
 
-                    console.log(graph_name, points.length, min, max);
-
                     var plot_data = [];
 
                     $.each(points, function(i, point){
 
                         var date = point[0];
                         var value = point[1];
-                        console.log(value);
 
                         if (plot_data.length == 0 || value > max) max = value;
                         if (plot_data.length == 0 || value < min) min = value;
@@ -52,8 +49,6 @@ function device_series_graph(device_id, series_id, id){
                         plot_data.push([new Date(date), value]);
 
                     })
-
-                    console.log(graph_name, points.length, min, max);
 
                     series.push(plot_data);
 
