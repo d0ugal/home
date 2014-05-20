@@ -13,6 +13,8 @@ notifications:
   irc: chat.freenode.net#python-home
 addons:
   postgresql: '9.3'
+services:
+  - redis-server
 before_script:
 - psql -c 'CREATE DATABASE test_home;' -U postgres
 - psql -c 'CREATE EXTENSION hstore;' -U postgres test_home

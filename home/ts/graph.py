@@ -7,7 +7,9 @@ we can display them in different ways. For example, rather than showing an
 increasing total watts we can show how much was used in the hour.
 """
 
-from datetime import timedelta
+from datetime import timedelta, datetime
+from decimal import Decimal
+from collections import defaultdict
 from functools import partial
 from itertools import groupby
 
@@ -19,26 +21,12 @@ AGGREGATORS = {
 }
 
 
-class AggregatedResultSet:
-
-    def __init__(self, group, duration, value):
-
-        self.group = group
-        self.duration = duration
-        self.value = value
-
-    def as_dict(self):
-        return {
-            'created_at': self.group,
-            'value': self.value
-        }
-
-
 def round_datetime(data_point, round_by):
-    seconds = (data_point.created_at - data_point.created_at.min).seconds
+    created_at = datetime.strptime(data_point[0], "%Y-%m-%dT%H:%M:%S.%f")
+    seconds = (created_at - created_at.min).seconds
     rounding = (seconds + round_by / 2) // round_by * round_by
-    d = timedelta(0, rounding-seconds, -data_point.created_at.microsecond)
-    return data_point.created_at + d
+    d = timedelta(0, rounding-seconds, - created_at.microsecond)
+    return created_at + d
 
 
 def group_values(values, aggregator_functions):
@@ -47,7 +35,7 @@ def group_values(values, aggregator_functions):
 
     key = partial(round_datetime, round_by=seconds)
 
-    results = [[] for _ in aggregator_functions]
+    results = defaultdict(list)
 
     for group, group_values in groupby(values, key=key):
 
@@ -55,10 +43,9 @@ def group_values(values, aggregator_functions):
 
         for i, aggregator_function in enumerate(aggregator_functions):
             f = AGGREGATORS[aggregator_function]
-            value = f([dp.value for dp in group_values])
+            value = f([Decimal(dp[1]) for dp in group_values])
 
-            results[i].append(AggregatedResultSet(group=group,
-                              duration=seconds, value=value))
+            results[aggregator_function].append((group, value))
 
     return results
 

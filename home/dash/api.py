@@ -6,13 +6,15 @@ The web API that is primarilly used by the front end for rending graphs.
 """
 
 from functools import wraps
+from datetime import datetime
 
 from flask import Blueprint, request, jsonify, abort
 from flask.views import MethodView
 from werkzeug.exceptions import BadRequest
 
+from home import redis_series
 from home.ts import graph
-from home.ts.models import Area, Device, Series, DataPoint, DeviceSeries
+from home.ts.models import Area, Device, Series, DeviceSeries
 
 api = Blueprint('Dashboard API', __name__)
 
@@ -106,59 +108,49 @@ class DeviceSeriesResource(Resource):
     model = DeviceSeries
 
 
-class ValuesResource(Resource):
-    model = DataPoint
-
-
 class AreasResource(Resource):
     model = Area
 
 
-class GraphResource(ValuesResource):
+class GraphResource(JSONResource):
+
+    def get(self, resource_id=None, name=None):
+        abort(404)
 
     @kwarg_json_query
     def post(self, query=None):
 
         graph_func = None
-        device_series_id = None
 
-        if query is None:
+        if query is None or len(query) == 0:
             abort(400)
 
-        qs = DataPoint.query.order_by(DataPoint.created_at.desc())
+        device_id, series_id = query['device_id'], query['series_id']
 
-        if 'device_id' in query and 'series_id' in query:
+        key = "D-{0}:S-{1}".format(device_id, series_id)
 
+        start = datetime.strptime(query['start'], "%Y-%m-%d %H:%M:%S")
+        end = datetime.strptime(query['end'], "%Y-%m-%d %H:%M:%S")
+
+        result_set = redis_series.query(key, start, end, 'hourly')
+
+        if 'graph' not in query:
             ds = DeviceSeries.query.filter_by(
-                device_id=query['device_id'],
-                series_id=query['series_id'],
+                device_id=device_id,
+                series_id=series_id,
             ).first()
-
-            if 'graph' not in query:
-                graph_func = graph.get_method(ds.series.graph)
-
-            if ds is not None:
-                device_series_id = ds.id
-
-        if 'device_series_id' in query:
-            device_series_id = query['device_series_id']
-
-        if device_series_id is not None:
-            qs = qs.filter_by(device_series_id=device_series_id)
-
-        if 'start' in query and 'end' in query:
-            start = query['start']
-            end = query['end']
-            qs = qs.filter(DataPoint.created_at.between(start, end))
-
-        qs = qs.limit(10000)
+            graph_func = graph.get_method(ds.series.graph)
 
         if graph_func is not None:
-            qs = graph_func(qs)
+            results = graph_func(result_set)
         else:
-            qs = [qs, ]
+            results = {'full': result_set}
 
-        return self.jsonify_qs(qs)
+        return jsonify({
+            'data': {
+                'results': results
+            }
+        })
 
 
 register_api(AreasResource, 'areas', '/areas/')
@@ -166,4 +158,3 @@ register_api(DeviceSeriesResource, 'device_series', '/device_series/')
 register_api(DevicesResource, 'devices', '/devices/')
 register_api(GraphResource, 'graph', '/graph/')
 register_api(SeriesResource, 'series', '/series/')
-register_api(ValuesResource, 'values', '/values/')

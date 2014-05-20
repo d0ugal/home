@@ -38,24 +38,22 @@
                             <th>Updated</th>
                         </tr>
 
-                        {% for device_name, series_list in device_readings.items() %}
-                                {% for series in series_list %}
-                                    <tr>
-                                        <td>
-                                            <a href="{{ url_for('.dashboard', device_name=device_name ) }}">
-                                                {{ device_name|title }}
-                                            </a>
-                                        </td>
-                                        <td>{{ series.name|title }}</td>
-                                        <td>{{ series.value|float|round(2) }}</td>
-                                        <td>
-                                            <span class="sparkline">{{ series.sparkline }}</span>
-                                        </td>
-                                        <td>
-                                            {{ series.created_at}}
-                                        </td>
-                                    </tr>
-                            {% endfor %}
+                        {% for device_series, latest_value, updated_at, latest_values in device_readings %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('.dashboard', device_name=device_series.device.area.name ) }}">
+                                        {{ device_series.device.area.name|title }}
+                                    </a>
+                                </td>
+                                <td>{{ device_series.series.name|title }}</td>
+                                <td>{{ latest_value|float|round(2) }}</td>
+                                <td>
+                                    <span class="sparkline">{{ latest_values }}</span>
+                                </td>
+                                <td>
+                                    {{ updated_at }}
+                                </td>
+                            </tr>
                         {% endfor %}
                     </table>
 
