@@ -112,7 +112,8 @@ class RecordingHandler(BaseHandler):
                 return
 
             id_ = packet.data.get('id')
-            self.log.info("ID=%s, %s=%s" % (id_, series_name, val))
+            self.log.info("ID=%s, %s=%s, Device ID=%s, Series ID=" % (
+                id_, series_name, val, device.id, series.id))
             DataPoint.record(series, device, val)
 
         db.session.commit()
