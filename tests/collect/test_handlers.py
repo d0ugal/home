@@ -112,11 +112,12 @@ class LoggingHandlerTestCase(BaseTestCase):
 
         with self.assertLogs(self.log_name, level='INFO') as cm:
 
+            self.packet.__str__ = lambda self: "X=1"
             self.handler(self.packet)
 
             self.assertEqual(cm.output, [
-                'WARNING:home.collect.LoggingHandler:Ignoring packet: 0x11 '
-                '0x5a 0x01 0x00 0x2e 0xb2 0x03 0x00 0x00'
+                'WARNING:home.collect.LoggingHandler:Ignoring packet: X=1 ('
+                '0x11 0x5a 0x01 0x00 0x2e 0xb2 0x03 0x00 0x00)'
             ])
 
 

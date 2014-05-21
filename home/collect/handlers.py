@@ -85,7 +85,7 @@ class LoggingHandler(BaseHandler):
     def __call__(self, packet):
 
         self.log.warning(
-            "Ignoring packet: {0}".format(self.format_packet(packet.raw)))
+            "Ignoring packet: {0} ({1})".format(packet, self.format_packet(packet.raw)))
 
 
 class RecordingHandler(BaseHandler):
@@ -112,7 +112,7 @@ class RecordingHandler(BaseHandler):
                 return
 
             id_ = packet.data.get('id')
-            self.log.info("ID=%s, %s=%s, Device ID=%s, Series ID=" % (
+            self.log.info("ID=%s, %s=%s, Device ID=%s, Series ID=%s" % (
                 id_, series_name, val, device.id, series.id))
             DataPoint.record(series, device, val)
 
