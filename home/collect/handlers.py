@@ -85,7 +85,8 @@ class LoggingHandler(BaseHandler):
     def __call__(self, packet):
 
         self.log.warning(
-            "Ignoring packet: {0} ({1})".format(packet, self.format_packet(packet.raw)))
+            "Ignoring packet: {0} ({1})".format(
+                packet, self.format_packet(packet.raw)))
 
 
 class RecordingHandler(BaseHandler):
