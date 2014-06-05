@@ -5,10 +5,10 @@ env:
 - TOX_ENV=py34
 - TOX_ENV=flake8
 - TOX_ENV=docs
+- TOX_ENV=coverage
 install:
 - pip install tox
-script:
-- tox -e $TOX_ENV
+script: "./.travis.sh"
 notifications:
   irc: chat.freenode.net#python-home
 addons:
@@ -26,3 +26,6 @@ deploy:
   on:
     tags: true
     repo: d0ugal/home
+matrix:
+  allow_failures:
+    - env: TOXENV=coverage
