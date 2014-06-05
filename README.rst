@@ -11,4 +11,7 @@ Home
 .. image:: http://img.shields.io/pypi/dm/home.svg?style=flat
    :target: https://pypi.python.org/pypi/home
 
+.. image:: http://img.shields.io/coveralls/d0ugal/home.svg?style=flat
+   :target: https://coveralls.io/r/d0ugal/home?branch=master
+
 Codes for automating your house. WIP project by Dougal Matthews.
