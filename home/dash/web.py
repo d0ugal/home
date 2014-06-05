@@ -18,8 +18,10 @@ web = Blueprint('Dashboard Web', __name__)
 
 
 @web.context_processor
-def inject_devices():
-    return dict(devices=Device.query.join(Area).order_by(Area.name).all())
+def inject_areas():
+    return {
+        'areas': Area.query.order_by(Area.name).all(),
+    }
 
 
 @web.context_processor
@@ -28,15 +30,15 @@ def inject_webcams():
 
 
 @web.route('/')
-@web.route('/areas/<device_name>/')
+@web.route('/areas/<area_name>/')
 @login_required
-def dashboard(device_name=None):
+def dashboard(area_name=None):
 
     device_series = DeviceSeries.query
 
-    if device_name:
+    if area_name:
         device_series = device_series\
-            .filter(Area.name == device_name)\
+            .filter(Area.name == area_name)\
             .join(DeviceSeries.device)\
             .join(Device.area)\
             .order_by(Area.name)
@@ -56,7 +58,7 @@ def dashboard(device_name=None):
         line = (ds, latest_value, updated_at, latest_values)
         device_series_values.append(line)
 
-    if device_name is not None:
+    if area_name is not None:
         template = 'device.html'
     else:
         template = 'dashboard.html'
@@ -64,7 +66,7 @@ def dashboard(device_name=None):
     return render_template(
         template,
         device_readings=device_series_values,
-        device_name=device_name,
+        area_name=area_name,
     )
 
 

@@ -6,7 +6,6 @@ The web API that is primarilly used by the front end for rending graphs.
 """
 
 from functools import wraps
-from datetime import datetime
 
 from flask import Blueprint, request, jsonify, abort
 from flask.views import MethodView
@@ -14,7 +13,8 @@ from werkzeug.exceptions import BadRequest
 
 from home import redis_series
 from home.ts import graph
-from home.ts.models import Area, Device, Series, DeviceSeries
+from home.ts.models import Area, Device, Series, DeviceSeries, Graph
+from home.util import dtparse
 
 api = Blueprint('Dashboard API', __name__)
 
@@ -112,37 +112,46 @@ class AreasResource(Resource):
     model = Area
 
 
-class GraphResource(JSONResource):
+class GraphsResource(Resource):
+    model = Graph
+
+
+class SearchResource(JSONResource):
 
     def get(self, resource_id=None, name=None):
-        abort(404)
+        abort(405)
 
     @kwarg_json_query
     def post(self, query=None):
 
-        graph_func = None
-
         if query is None or len(query) == 0:
-            abort(400)
+            abort(405)
 
         device_id, series_id = query['device_id'], query['series_id']
 
         key = "D-{0}:S-{1}".format(device_id, series_id)
 
-        start = datetime.strptime(query['start'], "%Y-%m-%d %H:%M:%S")
-        end = datetime.strptime(query['end'], "%Y-%m-%d %H:%M:%S")
+        start = dtparse(query['start'])
+        end = dtparse(query['end'])
+        precision = query.get('precision', 'daily')
 
-        result_set = redis_series.query(key, start, end, 'hourly')
+        result_set = redis_series.query(key, start, end, precision)
 
-        if 'graph' not in query:
+        aggregator_func = None
+
+        if 'aggregator' not in query:
             ds = DeviceSeries.query.filter_by(
                 device_id=device_id,
                 series_id=series_id,
             ).first()
-            graph_func = graph.get_method(ds.series.graph)
 
-        if graph_func is not None:
-            results = graph_func(result_set)
+            if ds.series.graph:
+                aggregator_func = graph.get_method(ds.series.graph.aggregator)
+        else:
+            aggregator_func = graph.get_method(query['aggregator'])
+
+        if aggregator_func:
+            results = aggregator_func(result_set)
         else:
             results = {'full': result_set}
 
@@ -156,5 +165,6 @@ class GraphResource(JSONResource):
 register_api(AreasResource, 'areas', '/areas/')
 register_api(DeviceSeriesResource, 'device_series', '/device_series/')
 register_api(DevicesResource, 'devices', '/devices/')
-register_api(GraphResource, 'graph', '/graph/')
+register_api(SearchResource, 'search', '/search/')
+register_api(GraphsResource, 'graphs', '/graphs/')
 register_api(SeriesResource, 'series', '/series/')

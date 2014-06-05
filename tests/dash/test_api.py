@@ -65,7 +65,7 @@ class SeriesResourceTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
 
-class GraphResourceTestCase(BaseTestCase):
+class SearchResourceTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()
@@ -79,8 +79,8 @@ class GraphResourceTestCase(BaseTestCase):
 
     def test_get(self):
 
-        r = self.client.get('/api/graph/')
-        self.assertEqual(r.status_code, 404)
+        r = self.client.get('/api/search/')
+        self.assertEqual(r.status_code, 405)
 
     def test_post(self):
 
@@ -91,10 +91,10 @@ class GraphResourceTestCase(BaseTestCase):
             'end': "2014-05-20 20:55:55",
         })
 
-        r = self.client.post('/api/graph/', data=json_string)
+        r = self.client.post('/api/search/', data=json_string)
         self.assertEqual(r.json, {'data': {'results': {'full': []}}})
         self.assertEqual(r.status_code, 200)
 
     def test_post_empty(self):
-        r = self.client.post('/api/graph/')
-        self.assertEqual(r.status_code, 400)
+        r = self.client.post('/api/search/')
+        self.assertEqual(r.status_code, 405)

@@ -6,6 +6,8 @@ The random file all projects have where they dump stuff they don't know where
 else to place.
 """
 
+from datetime import datetime
+
 
 def get_or_create(model, **kwargs):
 
@@ -18,3 +20,15 @@ def get_or_create(model, **kwargs):
         instance = model(**kwargs)
         db.session.add(instance)
         return instance
+
+
+def dtparse(string):
+
+    date_formats = (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d",
+    )
+
+    for date_format in date_formats:
+
+        return datetime.strptime(string, date_format)

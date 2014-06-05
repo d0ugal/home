@@ -56,11 +56,8 @@ FUNCTIIONS = {
 }
 
 
-def get_method(graph_model):
+def get_method(aggregator_name):
 
-    if graph_model is None:
-        return
-
-    f = FUNCTIIONS.get(graph_model.aggregator)
+    f = FUNCTIIONS.get(aggregator_name, None)
 
     return f

@@ -26,7 +26,7 @@ function device_series_graph(device_id, series_id, id){
         }),
         dataType: 'json',
         type: 'POST',
-        url: '/api/graph/',
+        url: '/api/search/',
         success: function(data){
 
             var series = [];

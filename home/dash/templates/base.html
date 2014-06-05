@@ -49,10 +49,10 @@
                             </a>
                         </li>
 
-                        {% for device in devices %}
+                        {% for area in areas %}
                         <li>
-                            <a href="{{ url_for('.dashboard', device_name=device.area.name) }}">
-                                <i class="fa fa-th"></i> <span>{{ device.area.name|title }}</span>
+                            <a href="{{ url_for('.dashboard', area_name=area.name) }}">
+                                <i class="fa fa-th"></i> <span>{{ area.name|title }}</span>
                             </a>
                         </li>
                         {% endfor %}
@@ -112,13 +112,11 @@
 
                     {% block content %}{% endblock %}
 
-                </section><!-- /.content -->
-            </aside><!-- /.right-side -->
-        </div><!-- ./wrapper -->
+                </section>
+            </aside>
+        </div>
 
-        <!-- jQuery 2.0.2 -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-        <!-- Bootstrap -->
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" type="text/javascript"></script>
 
         <script src="{{ url_for('static', filename='js/AdminLTE/app.js') }}" type="text/javascript"></script>

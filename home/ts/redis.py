@@ -59,7 +59,7 @@ class RedisSeries:
         pipeline.execute()
 
     def event_key(self, series, dt, dt_fmt):
-        return "{0}:{1}".format(series, dt.strftime(dt_fmt))
+        return self.named_key(series, dt.strftime(dt_fmt))
 
     def named_key(self, series, name):
         return "{0}:{1}".format(series, name)
@@ -70,15 +70,15 @@ class RedisSeries:
         current = start
         pipeline = self._redis.pipeline()
 
-        while current < end:
+        while current <= end:
             key = self.event_key(series, current, dt_fmt)
+            print(key)
             pipeline.hgetall(key)
             current += delta
 
         results = pipeline.execute()
 
-        results = sorted(list(chain(*[result.items() for result in results])))
-
+        results = sorted(chain(*[result.items() for result in results]))
         return [(r[0], Decimal(r[1])) for r in results]
 
     def status(self):
