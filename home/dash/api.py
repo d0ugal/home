@@ -6,6 +6,7 @@ The web API that is primarilly used by the front end for rending graphs.
 """
 
 from functools import wraps
+from logging import getLogger
 
 from flask import Blueprint, request, jsonify, abort
 from flask.views import MethodView
@@ -14,9 +15,10 @@ from werkzeug.exceptions import BadRequest
 from home import redis_series
 from home.ts import graph
 from home.ts.models import Area, Device, Series, DeviceSeries, Graph
-from home.util import dtparse
+from home.util import dtparse, timer
 
 api = Blueprint('Dashboard API', __name__)
+log = getLogger('home.dash.api')
 
 
 def register_api(view, endpoint, url):
@@ -122,6 +124,7 @@ class SearchResource(JSONResource):
         abort(405)
 
     @kwarg_json_query
+    @timer("Search POST", log)
     def post(self, query=None):
 
         if query is None or len(query) == 0:
@@ -129,7 +132,7 @@ class SearchResource(JSONResource):
 
         device_id, series_id = query['device_id'], query['series_id']
 
-        key = "D-{0}:S-{1}".format(device_id, series_id)
+        key = "D-{}:S-{}".format(device_id, series_id)
 
         start = dtparse(query['start'])
         end = dtparse(query['end'])
@@ -151,7 +154,8 @@ class SearchResource(JSONResource):
             aggregator_func = graph.get_method(query['aggregator'])
 
         if aggregator_func:
-            results = aggregator_func(result_set)
+            with timer("Aggregation", log):
+                results = aggregator_func(result_set)
         else:
             results = {'full': result_set}
 

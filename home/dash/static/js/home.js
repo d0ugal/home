@@ -125,10 +125,9 @@ $(function(){
         var original = val.src;
 
         var reloader = function(){
-            var new_src = original + "?z=" + new Date().getTime();
-            console.log(new_src);
+            var new_src = original + "&z=" + new Date().getTime();
             val.src = new_src;
-            setTimeout(reloader, 10000);
+            setTimeout(reloader, 1000);
         }
 
         reloader()
