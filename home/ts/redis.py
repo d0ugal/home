@@ -8,13 +8,15 @@ series:device:YYYY-MM-DD-HH-MM-SS
 current watts:1:2014-05-19-20-45-49
 
 """
-
 from datetime import datetime
 from decimal import Decimal
 from itertools import chain
+from logging import getLogger
 
 from dateutil.relativedelta import relativedelta
 from redis import StrictRedis
+
+from home.util import timer
 
 
 RESOLUTIONS = {
@@ -32,6 +34,7 @@ class RedisSeries:
     def __init__(self, host=None, port=None, db=None, password=None):
 
         self._redis = StrictRedis(decode_responses=True)
+        self.log = getLogger('home.ts.redis.RedisSeries')
 
     def push(self, series, value, dt=None):
 
@@ -56,7 +59,10 @@ class RedisSeries:
             pipeline.hset(key, timestamp, value)
             pipeline.expire(key, EXPIRE_AFTER)
 
-        pipeline.execute()
+        count = len(pipeline)
+
+        with timer("Redis Push (commands: {0})".format(count), self.log) as t:
+            pipeline.execute()
 
     def event_key(self, series, dt, dt_fmt):
         return self.named_key(series, dt.strftime(dt_fmt))
@@ -72,11 +78,13 @@ class RedisSeries:
 
         while current <= end:
             key = self.event_key(series, current, dt_fmt)
-            print(key)
+            self.log.debug("HGETALL {0}".format(key))
             pipeline.hgetall(key)
             current += delta
 
-        results = pipeline.execute()
+        count = len(pipeline)
+        with timer("Redis Query (commands: {0})".format(count), self.log) as t:
+            results = pipeline.execute()
 
         results = sorted(chain(*[result.items() for result in results]))
         return [(r[0], Decimal(r[1])) for r in results]

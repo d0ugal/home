@@ -4,6 +4,7 @@ home.dash.web
 
 The web controllers for rendering login, logout and dashboard screens.
 """
+from logging import getLogger
 
 from flask import render_template, Blueprint, request, redirect, url_for, flash
 from flask.ext.login import login_required, login_user, logout_user
@@ -12,12 +13,15 @@ from home import redis_series
 from home.dash.models import User
 from home.ts.models import Area, DeviceSeries, Device
 from home.webcam.models import Webcam
+from home.util import timer
 
 
 web = Blueprint('Dashboard Web', __name__)
+log = getLogger('home.dash.web')
 
 
 @web.context_processor
+@timer("Inject Areas", log)
 def inject_areas():
     return {
         'areas': Area.query.order_by(Area.name).all(),
@@ -25,12 +29,14 @@ def inject_areas():
 
 
 @web.context_processor
+@timer("Inject Webcams", log)
 def inject_webcams():
     return dict(webcams=Webcam.query.all())
 
 
 @web.route('/')
 @web.route('/areas/<area_name>/')
+@timer("Dashboard Render", log)
 @login_required
 def dashboard(area_name=None):
 
