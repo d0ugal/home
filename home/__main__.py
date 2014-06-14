@@ -16,14 +16,14 @@ from flask.ext.script import Manager, Server, prompt_pass
 
 from home import create_app, db
 from home.collect.loop import collect as rfxcom_collect
-from home.dash.models import User
+from home.api.models import User
 
 app = create_app()
 
 manager = Manager(app, with_default_commands=False)
 
 manager.add_command('db', MigrateCommand)
-manager.add_command("dashboard", Server(host='0.0.0.0', use_debugger=False,
+manager.add_command("api", Server(host='0.0.0.0', use_debugger=False,
                     use_reloader=False))
 
 

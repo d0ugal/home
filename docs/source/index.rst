@@ -13,14 +13,3 @@ Contents:
    :maxdepth: 2
 
    quickstart
-
-
-API Reference Documentation:
-
-.. toctree::
-   :maxdepth: 2
-
-   ref/index
-   ref/collect/index
-   ref/dash/index
-   ref/ts/index

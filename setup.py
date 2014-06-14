@@ -37,7 +37,6 @@ setup(
     author_email='dougal@dougalmatthews.com',
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
-        'aiohttp>=0.7.2',
         'alembic>=0.6.4',
         'Flask-Admin>=1.0.7',
         'Flask-Login>=0.2.10',

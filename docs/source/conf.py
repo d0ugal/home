@@ -48,64 +48,6 @@ def find_version(*parts):
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", ".."))
-
-sys.path.insert(0, ROOT)
-sys.path.insert(0, BASE_DIR)
-
-
-def gen_ref(ver, title, names):
-
-    names = ["__init__", ] + names
-
-    refdir = os.path.join(BASE_DIR, "ref")
-    pkg = "home"
-
-    if ver:
-        pkg = "%s.%s" % (pkg, ver)
-        refdir = os.path.join(refdir, ver)
-
-    if not os.path.exists(refdir):
-        os.makedirs(refdir)
-
-    idxpath = os.path.join(refdir, "index.rst")
-
-    with open(idxpath, "w") as idx:
-
-        idx.write(("%(title)s\n"
-                   "%(signs)s\n"
-                   "\n"
-                   ".. toctree::\n"
-                   " :maxdepth: 1\n"
-                   "\n") % {"title": title, "signs": "=" * len(title)})
-
-        for name in names:
-            idx.write(" %s\n" % name)
-            rstpath = os.path.join(refdir, "%s.rst" % name)
-
-            with open(rstpath, "w") as rst:
-
-                vals = {
-                    "pkg": pkg, "name": name
-                }
-
-                rst.write(
-                    "\n"
-                    ".. automodule:: %(pkg)s.%(name)s\n"
-                    "   :members:\n"
-                    "   :undoc-members:\n"
-                    "   :show-inheritance:\n" % vals)
-
-
-if not on_rtd:
-    gen_ref("", "Home (home)", ["__main__", "config", "exceptions", "util"])
-    gen_ref("collect", "Collect (home.collect)", ["handlers", "loop"])
-    gen_ref("dash", "Dashboard (home.dash)", ["api", "models", "web"])
-    gen_ref("ts", "Time Series (home.ts)", ["graph", "models"])
-
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.

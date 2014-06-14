@@ -11,15 +11,6 @@ PROJECT_PATH = path.dirname(path.realpath(__file__))
 #: The database connection string.
 SQLALCHEMY_DATABASE_URI = 'postgresql://home:home@localhost:5432/home'
 
-#: Location of the dashboard templates.
-TEMPLATE_FOLDER = path.join(PROJECT_PATH, 'dash', 'templates')
-
-#: Location of the dashboard static assets.
-STATIC_FOLDER = path.join(PROJECT_PATH, 'dash', 'static')
-
-#: Location of the uploaded/dynamic files.
-MEDIA_FOLDER = path.join(STATIC_FOLDER, 'media')
-
 #: Location of the Alembic database migrations.
 MIGRATE_DIRECTORY = path.join(PROJECT_PATH, 'migrations')
 

@@ -27,11 +27,11 @@ def create_app(config=None):
     """ This needs some tidying up. To avoid circular imports we import
     everything here but it makes this method a bit more gross.
     """
+    from home.api.api import api
+    from home.api.models import User
+    from home.api.admin import setup_admin
 
-    # Initialise the app
-    from home.config import TEMPLATE_FOLDER, STATIC_FOLDER
-    app = Flask(__name__, static_folder=STATIC_FOLDER,
-                template_folder=TEMPLATE_FOLDER)
+    app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'ssh, its a secret.'
 
@@ -44,16 +44,10 @@ def create_app(config=None):
 
     app.config.from_object(config)
 
-    # Register the web front end and the API.
-    from home.dash.web import web
-    from home.dash.api import api
-    app.register_blueprint(web)
     app.register_blueprint(api, url_prefix='/api')
 
     login_manager.init_app(app)
     login_manager.login_view = 'Dashboard Web.login'
-
-    from home.dash.models import User
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -65,7 +59,6 @@ def create_app(config=None):
 
     admin = Admin(app)
 
-    from home.dash.admin import setup_admin
     setup_admin(admin)
 
     # Wire up the database to the app so it gets the config.
