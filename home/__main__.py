@@ -17,7 +17,6 @@ from flask.ext.script import Manager, Server, prompt_pass
 from home import create_app, db
 from home.collect.loop import collect as rfxcom_collect
 from home.dash.models import User
-from home.webcam.loop import collect as webcam_collect
 
 app = create_app()
 
@@ -50,11 +49,6 @@ def collect(device):
     warn("The collect command is deprecated. Use the rfxcom command instead.",
          DeprecationWarning)
     rfxcom(device)
-
-
-@manager.command
-def webcam():
-    webcam_collect()
 
 
 @manager.option('username', help='Username.')

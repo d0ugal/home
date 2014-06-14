@@ -17,9 +17,5 @@ class Webcam(db.Model):
     url = db.Column(db.String(250))
     created_on = db.Column(db.DateTime, nullable=False, index=True)
 
-    @property
-    def full_path(self):
-        return '/static/media/%s' % self.filename
-
     def __repr__(self):
         return '<Webcam %r>' % (self.name)
