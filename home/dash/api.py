@@ -20,6 +20,7 @@ from home.util import dtparse, timer
 api = Blueprint('Dashboard API', __name__)
 log = getLogger('home.dash.api')
 
+
 def register_api(view, endpoint, url):
     view_func = view.as_view(endpoint)
 

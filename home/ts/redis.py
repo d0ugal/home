@@ -61,7 +61,7 @@ class RedisSeries:
 
         count = len(pipeline)
 
-        with timer("Redis Push (commands: {0})".format(count), self.log) as t:
+        with timer("Redis Push (commands: {0})".format(count), self.log):
             pipeline.execute()
 
     def event_key(self, series, dt, dt_fmt):
@@ -83,7 +83,7 @@ class RedisSeries:
             current += delta
 
         count = len(pipeline)
-        with timer("Redis Query (commands: {0})".format(count), self.log) as t:
+        with timer("Redis Query (commands: {0})".format(count), self.log):
             results = pipeline.execute()
 
         results = sorted(chain(*[result.items() for result in results]))
